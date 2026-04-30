@@ -3,10 +3,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: '#d59ca3',
+        brand: '#a53973',
       },
       backgroundImage: {
-        'hero-gradient': 'radial-gradient(circle at top, rgba(213,156,163,0.18), transparent 40%), linear-gradient(180deg, #111111 0%, #090909 100%)',
+        'hero-gradient': 'radial-gradient(circle at top, rgba(165, 57, 115, 0.18), transparent 40%), linear-gradient(180deg, #111111 0%, #090909 100%)',
       },
     },
   },
