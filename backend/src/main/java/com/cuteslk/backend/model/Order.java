@@ -32,6 +32,10 @@ public class Order {
     @Column(nullable = false)
     private String status;
 
+    private String courierName;
+
+    private String courierNumber;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
@@ -51,6 +55,10 @@ public class Order {
     public void setMessage(String message) { this.message = message; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getCourierName() { return courierName; }
+    public void setCourierName(String courierName) { this.courierName = courierName; }
+    public String getCourierNumber() { return courierNumber; }
+    public void setCourierNumber(String courierNumber) { this.courierNumber = courierNumber; }
     public List<OrderItem> getOrderItems() { return orderItems; }
     public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
 

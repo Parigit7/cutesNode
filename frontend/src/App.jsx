@@ -71,6 +71,9 @@ function App() {
               </>
             ) : currentUser?.role === 'PACKAGE' ? (
               <>
+                <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/package/items">
+                  View Items
+                </Link>
                 <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/package">
                   Package Orders
                 </Link>

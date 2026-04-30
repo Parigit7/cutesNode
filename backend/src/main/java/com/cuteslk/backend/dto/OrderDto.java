@@ -11,6 +11,8 @@ public class OrderDto {
     private LocalDate requiredDate;
     private String message;
     private String status;
+    private String courierName;
+    private String courierNumber;
     private List<OrderItemDto> orderItems;
 
     public OrderDto() {}
@@ -27,6 +29,10 @@ public class OrderDto {
     public void setMessage(String message) { this.message = message; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getCourierName() { return courierName; }
+    public void setCourierName(String courierName) { this.courierName = courierName; }
+    public String getCourierNumber() { return courierNumber; }
+    public void setCourierNumber(String courierNumber) { this.courierNumber = courierNumber; }
     public List<OrderItemDto> getOrderItems() { return orderItems; }
     public void setOrderItems(List<OrderItemDto> orderItems) { this.orderItems = orderItems; }
 }

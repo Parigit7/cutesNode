@@ -101,7 +101,7 @@ public class OrderController {
         return ResponseEntity.ok(toDto(saved));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PACKAGE')")
     @Transactional
     @PutMapping("/{id}/status")
     public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable("id") String id, @RequestBody java.util.Map<String, String> body) {
@@ -112,6 +112,17 @@ public class OrderController {
         if (newStatus != null) {
             existing.setStatus(newStatus.toUpperCase());
         }
+        
+        String courierName = body.get("courierName");
+        if (courierName != null) {
+            existing.setCourierName(courierName);
+        }
+        
+        String courierNumber = body.get("courierNumber");
+        if (courierNumber != null) {
+            existing.setCourierNumber(courierNumber);
+        }
+
         Order saved = orderRepository.save(existing);
         return ResponseEntity.ok(toDto(saved));
     }
@@ -136,6 +147,8 @@ public class OrderController {
         dto.setRequiredDate(order.getRequiredDate());
         dto.setMessage(order.getMessage());
         dto.setStatus(order.getStatus());
+        dto.setCourierName(order.getCourierName());
+        dto.setCourierNumber(order.getCourierNumber());
         dto.setOrderItems(order.getOrderItems().stream().map(this::toItemDto).collect(Collectors.toList()));
         return dto;
     }

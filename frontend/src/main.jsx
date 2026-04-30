@@ -32,6 +32,7 @@ const router = createBrowserRouter(
         { path: 'sales/orders/add', element: <RequireSales><AddOrderPage /></RequireSales> },
         { path: 'sales/orders/edit/:id', element: <RequireSales><AddOrderPage /></RequireSales> },
         { path: 'package', element: <RequirePackage><PackageOrdersPage /></RequirePackage> },
+        { path: 'package/items', element: <RequirePackage><SalesItemsPage /></RequirePackage> },
       ],
     },
   ],
