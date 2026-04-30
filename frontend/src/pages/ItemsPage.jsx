@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import api from '../services/api';
 
 const initialItems = [
   {
@@ -69,8 +70,38 @@ function ItemsPage() {
   const [colorRows, setColorRows] = useState([{ color: '#d59ca3', qty: '' }]);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryCode, setNewCategoryCode] = useState('');
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const loadCategories = async () => {
+    try {
+      const response = await api.get('/categories');
+      if (Array.isArray(response.data) && response.data.length) {
+        setCategories(response.data);
+      }
+    } catch (error) {
+      console.error('Could not load categories from backend', error);
+    }
+  };
+
+  const loadItems = async () => {
+    try {
+      const response = await api.get('/items');
+      if (Array.isArray(response.data) && response.data.length) {
+        setItems(response.data);
+      }
+    } catch (error) {
+      console.error('Could not load items from backend', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+    loadItems();
+  }, []);
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
@@ -113,7 +144,7 @@ function ItemsPage() {
     setImageFile(file);
   };
 
-  const handleAddCategory = (event) => {
+  const handleAddCategory = async (event) => {
     event.preventDefault();
     setError('');
     setSuccess('');
@@ -132,18 +163,28 @@ function ItemsPage() {
       return;
     }
 
-    setCategories((prev) => [
-      ...prev,
-      { name: newCategoryName.trim(), code: newCategoryCode.trim().toUpperCase() },
-    ]);
-    setSelectedCategory(newCategoryName.trim());
-    setNewCategoryName('');
-    setNewCategoryCode('');
-    setError('');
-    setSuccess('Category added successfully.');
+    try {
+      const response = await api.post('/categories', {
+        name: newCategoryName.trim(),
+        code: newCategoryCode.trim().toUpperCase(),
+      });
+
+      const createdCategory = response.data;
+      setCategories((prev) => [
+        ...prev,
+        createdCategory,
+      ]);
+      setSelectedCategory(createdCategory.name);
+      setNewCategoryName('');
+      setNewCategoryCode('');
+      setSuccess('Category added successfully.');
+    } catch (error) {
+      console.error('Category save failed', error);
+      setError('Unable to save category. Please try again.');
+    }
   };
 
-  const handleAddItem = (event) => {
+  const handleAddItem = async (event) => {
     event.preventDefault();
     setError('');
     setSuccess('');
@@ -174,24 +215,32 @@ function ItemsPage() {
       colors.unshift({ name: 'Default', qty: parsedDefaultQty });
     }
 
-    const newItem = {
-      id: items.length + 1,
+    const payload = {
       code: nextItemCode,
       title: title.trim(),
       category: selectedCategory,
+      categoryCode: selectedCat.code,
       price: Number(price),
-      colors,
       image: imagePreview || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80',
+      colors,
     };
 
-    setItems((prev) => [newItem, ...prev]);
-    setTitle('');
-    setImage('');
-    setPrice('');
-    setDefaultQty('');
-    setColorRows([{ color: '#d59ca3', qty: '' }]);
-    setSuccess(`Item ${newItem.code} added successfully.`);
-    setShowForm(false);
+    try {
+      const response = await api.post('/items', payload);
+      const savedItem = response.data;
+      setItems((prev) => [savedItem, ...prev]);
+      setTitle('');
+      setImageFile(null);
+      setImagePreview('');
+      setPrice('');
+      setDefaultQty('');
+      setColorRows([{ color: '#d59ca3', qty: '' }]);
+      setSuccess(`Item ${savedItem.code} added successfully.`);
+      setShowForm(false);
+    } catch (error) {
+      console.error('Item save failed', error);
+      setError('Unable to save item. Please try again.');
+    }
   };
 
   return (

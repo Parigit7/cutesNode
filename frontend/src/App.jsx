@@ -1,9 +1,4 @@
-import { Route, Routes, Link, Navigate, useNavigate } from 'react-router-dom';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import AdminPanel from './pages/AdminPanel';
-import EmployeesPage from './pages/EmployeesPage';
-import ItemsPage from './pages/ItemsPage';
+import { Link, useNavigate, Outlet } from 'react-router-dom';
 
 function App() {
   const navigate = useNavigate();
@@ -69,13 +64,7 @@ function App() {
 
       <div className="mx-auto max-w-7xl px-6 py-6">
         <main>
-          <Routes>
-            <Route path="/" element={isAdminLoggedIn ? <Navigate to="/admin" replace /> : <HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/admin" element={<AdminPanel />} />
-            <Route path="/admin/items" element={<ItemsPage />} />
-            <Route path="/admin/employees" element={<EmployeesPage />} />
-          </Routes>
+          <Outlet />
         </main>
 
         <footer className="mt-12 text-center text-sm text-slate-500">
