@@ -6,16 +6,16 @@ function PackageOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('PENDING'); // PENDING, PACKED, SEND
-  
+
   const [expandedOrderId, setExpandedOrderId] = useState(null);
-  
+
   // Status Update State
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [newStatus, setNewStatus] = useState('');
   const [courierNameType, setCourierNameType] = useState('Prompt');
   const [customCourierName, setCustomCourierName] = useState('');
   const [courierNumber, setCourierNumber] = useState('');
-
+  //comment
   useEffect(() => {
     loadOrders();
   }, []);
@@ -36,11 +36,11 @@ function PackageOrdersPage() {
 
   const handleUpdateStatus = async (orderId) => {
     if (!newStatus) return;
-    
+
     const order = orders.find(o => o.orderId === orderId);
     let finalCourierName = '';
     let finalCourierNumber = '';
-    
+
     // If order is currently PENDING, we must enter courier details regardless of new status
     if (order?.status === 'PENDING') {
       finalCourierName = courierNameType === 'Other' ? customCourierName : courierNameType;
@@ -62,20 +62,20 @@ function PackageOrdersPage() {
         courierName: finalCourierName,
         courierNumber: courierNumber
       });
-      
+
       // Update local state
       setOrders(orders.map(o => {
         if (o.orderId === orderId) {
-          return { 
-            ...o, 
-            status: newStatus, 
-            courierName: o.status === 'PENDING' ? finalCourierName : o.courierName, 
-            courierNumber: o.status === 'PENDING' ? finalCourierNumber : o.courierNumber 
+          return {
+            ...o,
+            status: newStatus,
+            courierName: o.status === 'PENDING' ? finalCourierName : o.courierName,
+            courierNumber: o.status === 'PENDING' ? finalCourierNumber : o.courierNumber
           };
         }
         return o;
       }));
-      
+
       setExpandedOrderId(null);
       setNewStatus('');
       setCourierNameType('Prompt');
@@ -122,11 +122,10 @@ function PackageOrdersPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-3 font-semibold transition ${
-              activeTab === tab 
-                ? 'border-b-2 border-brand text-slate-950' 
+            className={`pb-3 font-semibold transition ${activeTab === tab
+                ? 'border-b-2 border-brand text-slate-950'
                 : 'text-slate-500 hover:text-slate-700'
-            }`}
+              }`}
           >
             {tab === 'SEND' ? 'Sent' : tab.charAt(0) + tab.slice(1).toLowerCase()}
             <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs">
@@ -144,7 +143,7 @@ function PackageOrdersPage() {
         ) : (
           filteredOrders.map(order => (
             <div key={order.orderId} className="rounded-3xl border border-slate-200 bg-slate-50 overflow-hidden">
-              <div 
+              <div
                 onClick={() => toggleExpand(order.orderId)}
                 className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-100 transition"
               >
@@ -169,11 +168,10 @@ function PackageOrdersPage() {
                       <span className="text-slate-500">: {order.courierNumber}</span>
                     </span>
                   )}
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                    order.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
-                    order.status === 'PACKED' ? 'bg-blue-100 text-blue-700' :
-                    'bg-green-100 text-green-700'
-                  }`}>
+                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${order.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
+                      order.status === 'PACKED' ? 'bg-blue-100 text-blue-700' :
+                        'bg-green-100 text-green-700'
+                    }`}>
                     {order.status}
                   </span>
                   <button className="rounded-full bg-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-300">
@@ -192,7 +190,7 @@ function PackageOrdersPage() {
         if (!order) return null;
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" onClick={() => toggleExpand(null)}>
-            <div 
+            <div
               className="bg-white rounded-[2rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative"
               onClick={(e) => e.stopPropagation()}
             >
@@ -201,7 +199,7 @@ function PackageOrdersPage() {
                   <p className="text-xs font-semibold uppercase tracking-wider text-brand">Order Details</p>
                   <h3 className="text-2xl font-bold text-slate-950">{order.orderId}</h3>
                 </div>
-                <button 
+                <button
                   onClick={() => toggleExpand(null)}
                   className="p-3 bg-slate-100 rounded-full text-slate-500 hover:bg-slate-200 transition"
                 >
@@ -210,7 +208,7 @@ function PackageOrdersPage() {
                   </svg>
                 </button>
               </div>
-              
+
               <div className="p-6 space-y-8">
                 {/* Order Meta Info */}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -231,7 +229,7 @@ function PackageOrdersPage() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Courier Info for Packed and Sent Orders */}
                 {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
                   <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-brand/20 bg-brand/5 p-5">
@@ -263,7 +261,7 @@ function PackageOrdersPage() {
                           <p className="font-semibold text-slate-950 text-lg">{item.itemCode} - {item.itemTitle}</p>
                           <div className="flex gap-6 text-sm text-slate-600 mt-2 bg-slate-50 inline-flex px-3 py-1.5 rounded-lg items-center">
                             <span className="flex items-center gap-1.5">
-                              Color: 
+                              Color:
                               {item.color && item.color !== 'N/A' && (
                                 <span className="w-3 h-3 rounded-full border border-slate-300 inline-block shadow-sm" style={{ backgroundColor: item.color }}></span>
                               )}
@@ -283,7 +281,7 @@ function PackageOrdersPage() {
                 {/* Update Status Controls */}
                 <div className="rounded-[1.5rem] border border-brand/20 bg-brand/5 p-6 space-y-5">
                   <h4 className="text-lg font-semibold text-brand">Update Order Status</h4>
-                  
+
                   <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                     <label className="grid gap-2 text-sm font-medium text-slate-700">
                       New Status
