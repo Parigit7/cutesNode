@@ -360,7 +360,8 @@ function AddOrderPage() {
               required
               value={requiredDate}
               onChange={(e) => setRequiredDate(e.target.value)}
-              className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+              onClick={(e) => e.target.showPicker?.()}
+              className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20 cursor-pointer"
             />
           </label>
 
