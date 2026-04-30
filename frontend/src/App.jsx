@@ -14,14 +14,14 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       <header className="w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
-        <div className="flex w-full items-center justify-between gap-4 px-5 py-3 lg:px-8">
+        <div className="flex w-full items-center justify-between gap-4 px-5 py-2 lg:px-8">
           <div className="flex items-center gap-4">
-            <div className="grid h-14 w-14 place-items-center rounded-2xl bg-slate-950 text-white text-2xl font-black">
-              C
+            <div className="h-24 w-24 overflow-hidden rounded-full">
+              <img src="/logo.png" alt="Cutes.lk Logo" className="h-full w-full object-cover" />
             </div>
             <div>
               <h1 className="text-2xl font-semibold tracking-tight text-slate-950">Cutes.lk</h1>
-              <p className="text-slate-500">Business management made simple</p>
+              <p className="text-slate-500 text-sm">Business management made simple</p>
             </div>
           </div>
 
