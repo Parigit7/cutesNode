@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ItemRequest {
 
+    private Long id;
     private String code;
     private String title;
     private String category;
@@ -14,6 +15,14 @@ public class ItemRequest {
     private List<ItemColorDto> colors;
 
     public ItemRequest() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCode() {

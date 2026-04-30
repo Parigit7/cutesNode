@@ -27,7 +27,9 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
-    if (status === 401 || status === 403) {
+    // Only clear session on actual unauthorized token/session.
+    // 403 can happen for permission/business constraints and should not force logout.
+    if (status === 401) {
       localStorage.removeItem('cutes-user');
       window.location.href = '/login';
     }

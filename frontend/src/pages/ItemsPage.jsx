@@ -55,7 +55,7 @@ const initialCategories = [
 ];
 
 function ItemsPage() {
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState([]);
   const [categories, setCategories] = useState(initialCategories);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
@@ -73,6 +73,9 @@ function ItemsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [editingItemId, setEditingItemId] = useState(null);
+  const [savingItem, setSavingItem] = useState(false);
+  const [deletingItemId, setDeletingItemId] = useState(null);
 
   const loadCategories = async () => {
     try {
@@ -88,7 +91,7 @@ function ItemsPage() {
   const loadItems = async () => {
     try {
       const response = await api.get('/items');
-      if (Array.isArray(response.data) && response.data.length) {
+      if (Array.isArray(response.data)) {
         setItems(response.data);
       }
     } catch (error) {
@@ -114,12 +117,27 @@ function ItemsPage() {
   const nextItemCode = useMemo(() => {
     const selected = categories.find((cat) => cat.name === selectedCategory);
     const categoryCode = selected?.code || 'IT';
-    const existingCount = items.filter((item) => item.code.startsWith(categoryCode)).length;
-    const nextValue = String(existingCount + 1).padStart(3, '0');
+    const maxExistingNumber = items
+      .filter((item) => item.code?.startsWith(categoryCode))
+      .map((item) => Number(item.code.slice(categoryCode.length)))
+      .filter((value) => Number.isFinite(value))
+      .reduce((max, value) => Math.max(max, value), 0);
+    const nextValue = String(maxExistingNumber + 1).padStart(3, '0');
     return `${categoryCode}${nextValue}`;
   }, [selectedCategory, categories, items]);
 
   const categoryOptions = ['All', ...categories.map((cat) => cat.name)];
+
+  const resetItemForm = () => {
+    setTitle('');
+    setImageFile(null);
+    setImagePreview('');
+    setPrice('');
+    setDefaultQty('');
+    setColorRows([{ color: '#d59ca3', qty: '' }]);
+    setSelectedCategory(categories[0]?.name || initialCategories[0].name);
+    setEditingItemId(null);
+  };
 
   const handleAddColorRow = () => {
     setColorRows((prev) => [...prev, { color: '#d59ca3', qty: '' }]);
@@ -188,15 +206,18 @@ function ItemsPage() {
     event.preventDefault();
     setError('');
     setSuccess('');
+    setSavingItem(true);
 
     if (!title.trim() || !price || Number(price) <= 0) {
       setError('Please enter a valid item title and price.');
+      setSavingItem(false);
       return;
     }
 
     const selectedCat = categories.find((cat) => cat.name === selectedCategory);
     if (!selectedCat) {
       setError('Please select a valid category.');
+      setSavingItem(false);
       return;
     }
 
@@ -206,6 +227,7 @@ function ItemsPage() {
 
     if (!colorDetails.length && !defaultQty) {
       setError('Add at least one color quantity or a default quantity.');
+      setSavingItem(false);
       return;
     }
 
@@ -216,7 +238,7 @@ function ItemsPage() {
     }
 
     const payload = {
-      code: nextItemCode,
+      code: editingItemId ? items.find((item) => item.id === editingItemId)?.code || nextItemCode : nextItemCode,
       title: title.trim(),
       category: selectedCategory,
       categoryCode: selectedCat.code,
@@ -226,20 +248,66 @@ function ItemsPage() {
     };
 
     try {
-      const response = await api.post('/items', payload);
+      const response = editingItemId
+        ? await api.post('/items', { id: editingItemId, ...payload })
+        : await api.post('/items', payload);
       const savedItem = response.data;
-      setItems((prev) => [savedItem, ...prev]);
-      setTitle('');
-      setImageFile(null);
-      setImagePreview('');
-      setPrice('');
-      setDefaultQty('');
-      setColorRows([{ color: '#d59ca3', qty: '' }]);
-      setSuccess(`Item ${savedItem.code} added successfully.`);
+      setItems((prev) => {
+        if (editingItemId) {
+          return prev.map((item) => (item.id === savedItem.id ? savedItem : item));
+        }
+        return [savedItem, ...prev];
+      });
+      resetItemForm();
+      setSuccess(editingItemId ? `Item ${savedItem.code} updated successfully.` : `Item ${savedItem.code} added successfully.`);
       setShowForm(false);
     } catch (error) {
       console.error('Item save failed', error);
-      setError('Unable to save item. Please try again.');
+      setError(error.response?.data?.error || error.response?.data?.message || 'Unable to save item. Please try again.');
+    } finally {
+      setSavingItem(false);
+    }
+  };
+
+  const handleEditItem = (item) => {
+    const defaultColor = item.colors.find((color) => color.name.toLowerCase() === 'default');
+    const customColors = item.colors
+      .filter((color) => color.name.toLowerCase() !== 'default')
+      .map((color) => ({ color: color.name, qty: String(color.qty) }));
+
+    setEditingItemId(item.id);
+    setTitle(item.title);
+    setImageFile(null);
+    setImagePreview(item.image);
+    setPrice(String(item.price));
+    setSelectedCategory(item.category);
+    setDefaultQty(defaultColor ? String(defaultColor.qty) : '');
+    setColorRows(customColors.length ? customColors : [{ color: '#d59ca3', qty: '' }]);
+    setShowForm(true);
+    setError('');
+    setSuccess('');
+  };
+
+  const handleDeleteItem = async (item) => {
+    const confirmed = window.confirm(`Delete item ${item.code} (${item.title})?`);
+    if (!confirmed) return;
+
+    setError('');
+    setSuccess('');
+    setDeletingItemId(item.id);
+    try {
+      await api.post('/items/delete', { id: item.id });
+      setItems((prev) => prev.filter((existing) => existing.id !== item.id));
+      if (editingItemId === item.id) {
+        resetItemForm();
+        setShowForm(false);
+      }
+      setSuccess(`Item ${item.code} deleted successfully.`);
+    } catch (deleteError) {
+      console.error('Item delete failed', deleteError);
+      setError('Unable to delete item. Please try again.');
+    } finally {
+      setDeletingItemId(null);
     }
   };
 
@@ -257,14 +325,18 @@ function ItemsPage() {
         <button
           type="button"
           onClick={() => {
-            setShowForm((value) => !value);
+            const opening = !showForm;
+            setShowForm(opening);
             setError('');
             setSuccess('');
+            if (opening || showForm) {
+              resetItemForm();
+            }
           }}
           className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:border-slate-300 hover:bg-slate-100"
         >
-          <span className="text-xl">+</span>
-          Add new item
+          <span className="text-xl">{showForm ? 'x' : '+'}</span>
+          {showForm ? 'Close form' : 'Add new item'}
         </button>
       </div>
 
@@ -453,14 +525,19 @@ function ItemsPage() {
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-slate-500">
-                Item code will be generated as <span className="font-semibold text-slate-900">{nextItemCode}</span>.
+                {editingItemId ? (
+                  <>Editing item <span className="font-semibold text-slate-900">{items.find((item) => item.id === editingItemId)?.code}</span>.</>
+                ) : (
+                  <>Item code will be generated as <span className="font-semibold text-slate-900">{nextItemCode}</span>.</>
+                )}
               </div>
               <button
                 type="button"
                 onClick={handleAddItem}
+                disabled={savingItem}
                 className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-pink-300"
               >
-                Save item
+                {savingItem ? 'Saving...' : editingItemId ? 'Update item' : 'Save item'}
               </button>
             </div>
 
@@ -496,6 +573,23 @@ function ItemsPage() {
                 <div className="flex items-center justify-between gap-4">
                   <span className="text-2xl font-semibold text-slate-950">${item.price.toFixed(2)}</span>
                   <span className="rounded-full bg-brand/10 px-3 py-1 text-sm font-semibold text-brand">In stock</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleEditItem(item)}
+                    className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-brand hover:bg-brand/10"
+                  >
+                    Update
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteItem(item)}
+                    disabled={deletingItemId === item.id}
+                    className="inline-flex items-center justify-center rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:border-rose-300 hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {deletingItemId === item.id ? 'Deleting...' : 'Delete'}
+                  </button>
                 </div>
 
                 <div className="space-y-3">
