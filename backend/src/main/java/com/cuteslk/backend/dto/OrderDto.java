@@ -13,6 +13,8 @@ public class OrderDto {
     private String status;
     private String courierName;
     private String courierNumber;
+    private String createdBy;
+    private String packedBy;
     private List<OrderItemDto> orderItems;
 
     public OrderDto() {}
@@ -35,4 +37,8 @@ public class OrderDto {
     public void setCourierNumber(String courierNumber) { this.courierNumber = courierNumber; }
     public List<OrderItemDto> getOrderItems() { return orderItems; }
     public void setOrderItems(List<OrderItemDto> orderItems) { this.orderItems = orderItems; }
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public String getPackedBy() { return packedBy; }
+    public void setPackedBy(String packedBy) { this.packedBy = packedBy; }
 }

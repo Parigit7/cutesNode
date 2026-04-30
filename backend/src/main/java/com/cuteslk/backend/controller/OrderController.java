@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import java.security.Principal;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class OrderController {
     @PreAuthorize("hasAnyRole('SALES_MANAGEMENT', 'ADMIN')")
     @Transactional
     @PostMapping
-    public ResponseEntity<OrderDto> createOrder(@Validated @RequestBody OrderDto dto) {
+    public ResponseEntity<OrderDto> createOrder(@Validated @RequestBody OrderDto dto, Principal principal) {
         if (orderRepository.existsById(dto.getOrderId())) {
             throw new ResponseStatusException(BAD_REQUEST, "Order ID already exists");
         }
@@ -53,6 +54,7 @@ public class OrderController {
         order.setBoxPrice(dto.getBoxPrice());
         order.setRequiredDate(dto.getRequiredDate());
         order.setMessage(dto.getMessage());
+        order.setCreatedBy(principal.getName());
         // Status defaults to PENDING in constructor
 
         List<OrderItem> items = dto.getOrderItems().stream().map(itemDto -> {
@@ -104,13 +106,16 @@ public class OrderController {
     @PreAuthorize("hasAnyRole('ADMIN', 'PACKAGE')")
     @Transactional
     @PutMapping("/{id}/status")
-    public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable("id") String id, @RequestBody java.util.Map<String, String> body) {
+    public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable("id") String id, @RequestBody java.util.Map<String, String> body, Principal principal) {
         Order existing = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Order not found"));
         
         String newStatus = body.get("status");
         if (newStatus != null) {
             existing.setStatus(newStatus.toUpperCase());
+            if (newStatus.equalsIgnoreCase("PACKED") || newStatus.equalsIgnoreCase("SEND")) {
+                existing.setPackedBy(principal.getName());
+            }
         }
         
         String courierName = body.get("courierName");
@@ -149,6 +154,8 @@ public class OrderController {
         dto.setStatus(order.getStatus());
         dto.setCourierName(order.getCourierName());
         dto.setCourierNumber(order.getCourierNumber());
+        dto.setCreatedBy(order.getCreatedBy());
+        dto.setPackedBy(order.getPackedBy());
         dto.setOrderItems(order.getOrderItems().stream().map(this::toItemDto).collect(Collectors.toList()));
         return dto;
     }

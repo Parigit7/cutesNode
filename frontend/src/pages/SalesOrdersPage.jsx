@@ -253,6 +253,30 @@ function SalesOrdersPage() {
                   )}
                 </div>
 
+                {/* Staff Accountability */}
+                <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                  <div>
+                    <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Created By (Sales)</p>
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full bg-brand/20 flex items-center justify-center text-brand text-xs font-bold">
+                        {order.createdBy?.charAt(0).toUpperCase() || 'S'}
+                      </div>
+                      <p className="font-bold text-slate-950">{order.createdBy || 'Unknown'}</p>
+                    </div>
+                  </div>
+                  {order.packedBy && (
+                    <div>
+                      <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Packed By (Package)</p>
+                      <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">
+                          {order.packedBy?.charAt(0).toUpperCase() || 'P'}
+                        </div>
+                        <p className="font-bold text-slate-950">{order.packedBy}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Courier Info for Packed and Sent Orders */}
                 {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
                   <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-brand/20 bg-brand/5 p-5">

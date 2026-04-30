@@ -35,6 +35,10 @@ public class Order {
     private String courierName;
 
     private String courierNumber;
+    
+    private String createdBy;
+    
+    private String packedBy;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
@@ -61,6 +65,10 @@ public class Order {
     public void setCourierNumber(String courierNumber) { this.courierNumber = courierNumber; }
     public List<OrderItem> getOrderItems() { return orderItems; }
     public void setOrderItems(List<OrderItem> orderItems) { this.orderItems = orderItems; }
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public String getPackedBy() { return packedBy; }
+    public void setPackedBy(String packedBy) { this.packedBy = packedBy; }
 
     public void addOrderItem(OrderItem item) {
         orderItems.add(item);
