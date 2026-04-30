@@ -7,6 +7,7 @@ import com.cuteslk.backend.model.Order;
 import com.cuteslk.backend.model.OrderItem;
 import com.cuteslk.backend.repository.OrderRepository;
 import com.cuteslk.backend.service.ItemService;
+import com.cuteslk.backend.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -26,12 +27,14 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
     private final ItemService itemService;
+    private final OrderRepository orderRepository;
 
-    public OrderController(OrderRepository orderRepository, ItemService itemService) {
+    public OrderController(OrderRepository orderRepository, ItemService itemService, OrderService orderService) {
         this.orderRepository = orderRepository;
         this.itemService = itemService;
+        this.orderService = orderService;
     }
 
     @GetMapping
@@ -41,67 +44,23 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyRole('SALES_MANAGEMENT', 'ADMIN')")
-    @Transactional
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(@Validated @RequestBody OrderDto dto, Principal principal) {
         if (orderRepository.existsById(dto.getOrderId())) {
             throw new ResponseStatusException(BAD_REQUEST, "Order ID already exists");
         }
 
-        Order order = new Order();
-        order.setOrderId(dto.getOrderId());
-        order.setPackingType(dto.getPackingType());
-        order.setBoxPrice(dto.getBoxPrice());
-        order.setRequiredDate(dto.getRequiredDate());
-        order.setMessage(dto.getMessage());
-        order.setCreatedBy(principal.getName());
-        order.setCustomerName(dto.getCustomerName());
-        order.setCustomerAddress(dto.getCustomerAddress());
-        order.setCustomerPhone1(dto.getCustomerPhone1());
-        order.setCustomerPhone2(dto.getCustomerPhone2());
-        // Status defaults to PENDING in constructor
-
-        List<OrderItem> items = dto.getOrderItems().stream().map(itemDto -> {
-            Item item = itemService.findById(itemDto.getItemId())
-                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Item not found with id: " + itemDto.getItemId()));
-            return new OrderItem(order, item, itemDto.getColor(), itemDto.getQuantity(), itemDto.getTotalPrice());
-        }).collect(Collectors.toList());
-
-        order.setOrderItems(items);
-
-        Order saved = orderRepository.save(order);
+        Order saved = orderService.createOrder(dto, principal.getName());
         return ResponseEntity.ok(toDto(saved));
     }
 
     @PreAuthorize("hasAnyRole('SALES_MANAGEMENT', 'ADMIN')")
-    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<OrderDto> updateOrder(@PathVariable("id") String id, @Validated @RequestBody OrderDto dto) {
         Order existing = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Order not found"));
 
-        if (!existing.getStatus().equals("PENDING") && !dto.getStatus().equals(existing.getStatus())) {
-            // Only admins can change status from pending to packed/send, check later or handle carefully
-        }
-
-        existing.setPackingType(dto.getPackingType());
-        existing.setBoxPrice(dto.getBoxPrice());
-        existing.setRequiredDate(dto.getRequiredDate());
-        existing.setMessage(dto.getMessage());
-        existing.setCustomerName(dto.getCustomerName());
-        existing.setCustomerAddress(dto.getCustomerAddress());
-        existing.setCustomerPhone1(dto.getCustomerPhone1());
-        existing.setCustomerPhone2(dto.getCustomerPhone2());
-        
-        // Update items
-        existing.getOrderItems().clear();
-        for (OrderItemDto itemDto : dto.getOrderItems()) {
-            Item item = itemService.findById(itemDto.getItemId())
-                    .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Item not found with id: " + itemDto.getItemId()));
-            existing.addOrderItem(new OrderItem(existing, item, itemDto.getColor(), itemDto.getQuantity(), itemDto.getTotalPrice()));
-        }
-
-        Order saved = orderRepository.save(existing);
+        Order saved = orderService.updateOrder(existing, dto);
         return ResponseEntity.ok(toDto(saved));
     }
 
@@ -135,13 +94,12 @@ public class OrderController {
     }
 
     @PreAuthorize("hasAnyRole('SALES_MANAGEMENT', 'ADMIN')")
-    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable("id") String id) {
         Order existing = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Order not found"));
                 
-        orderRepository.deleteById(id);
+        orderService.deleteOrder(existing);
         return ResponseEntity.noContent().build();
     }
 

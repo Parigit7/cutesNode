@@ -88,6 +88,14 @@ function AddOrderPage() {
     if (!quantity || quantity <= 0) return;
 
     const qty = parseInt(quantity, 10);
+    
+    // Check available quantity for selected color
+    const colorInfo = selectedItem.colors.find(c => c.name === selectedColor);
+    if (colorInfo && qty > colorInfo.qty) {
+      alert(`Insufficient stock! Only ${colorInfo.qty} available for ${selectedColor}.`);
+      return;
+    }
+
     const totalPrice = qty * selectedItem.price;
 
     const newItem = {
@@ -141,9 +149,11 @@ function AddOrderPage() {
       if (isEditing) {
         await api.put(`/orders/${orderId}`, payload);
         setSuccess('Order updated successfully.');
+        loadData(); // Refresh inventory after update
       } else {
         await api.post('/orders', payload);
         setSuccess('Order created successfully.');
+        loadData(); // Refresh inventory after creation
         // Reset form
         setOrderId('');
         setPackingType('No box');
