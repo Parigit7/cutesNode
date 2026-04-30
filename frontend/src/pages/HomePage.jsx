@@ -6,7 +6,7 @@ function HomePage() {
       {/* Decorative Background Elements */}
       <div className="absolute top-[-10%] left-[-5%] w-64 md:w-96 h-64 md:h-96 bg-brand/5 rounded-full blur-3xl" />
       <div className="absolute bottom-[-10%] right-[-5%] w-80 md:w-[30rem] h-80 md:h-[30rem] bg-brand/10 rounded-full blur-[100px]" />
-      
+
       {/* Floating Sparkles/Hearts */}
       <div className="hidden sm:block absolute top-10 left-[20%] animate-bounce-slow opacity-20 text-brand text-2xl">✨</div>
       <div className="hidden sm:block absolute bottom-20 left-[10%] animate-pulse opacity-10 text-brand text-4xl">❤️</div>
@@ -33,7 +33,7 @@ function HomePage() {
               </span> <br />
               with <span className="italic font-serif text-brand/80">cutes.lk</span>
             </h1>
-            
+
             <p className="text-base md:text-xl text-slate-500 max-w-lg mx-auto lg:mx-0 leading-relaxed font-medium">
               The ultimate management companion for your charming gift boutique.
               Efficiency meets elegance in every detail.
@@ -62,8 +62,8 @@ function HomePage() {
           <div className="order-1 lg:order-2 relative px-4 sm:px-10 lg:px-0 max-w-md lg:max-w-none mx-auto lg:mx-0">
             <div className="relative z-10 rounded-[2.5rem] md:rounded-[4rem] overflow-hidden border-[8px] md:border-[12px] border-white shadow-2xl lg:rotate-2 transition-transform hover:rotate-0 duration-700">
               <img
-                src="/cute_gift_hero.png"
-                alt="Cute Gift Shop"
+                src="/home.png"
+                alt="Pink Gift Packs"
                 className="w-full aspect-[4/5] object-cover"
               />
               <div className="absolute inset-0 bg-brand/5 mix-blend-multiply" />
@@ -71,19 +71,19 @@ function HomePage() {
 
             {/* Floating Elements - Adjusted for responsiveness */}
             <div className="absolute top-6 md:top-12 -left-2 md:-left-8 z-20 bg-white p-3 md:p-5 rounded-xl md:rounded-2xl shadow-xl border border-slate-50 flex items-center gap-2 md:gap-4 animate-bounce-slow">
-               <div className="w-8 md:w-10 h-8 md:h-10 rounded-full bg-pink-50 flex items-center justify-center text-brand text-lg md:text-xl">🎁</div>
-               <div>
-                  <p className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Live Sync</p>
-                  <p className="text-xs md:text-sm font-black text-slate-900 tracking-tight">Orders Active</p>
-               </div>
+              <div className="w-8 md:w-10 h-8 md:h-10 rounded-full bg-pink-50 flex items-center justify-center text-brand text-lg md:text-xl">🎁</div>
+              <div>
+                <p className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Live Sync</p>
+                <p className="text-xs md:text-sm font-black text-slate-900 tracking-tight">Orders Active</p>
+              </div>
             </div>
 
             <div className="absolute -bottom-4 md:-bottom-6 -right-2 md:-right-4 z-20 bg-white p-3 md:p-5 rounded-xl md:rounded-2xl shadow-xl border border-slate-50 flex items-center gap-2 md:gap-4 animate-bounce-slow-delayed">
-               <div className="w-8 md:w-10 h-8 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-lg md:text-xl">🚚</div>
-               <div>
-                  <p className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Delivery</p>
-                  <p className="text-xs md:text-sm font-black text-slate-900 tracking-tight">Real-time Tracking</p>
-               </div>
+              <div className="w-8 md:w-10 h-8 md:h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 text-lg md:text-xl">🚚</div>
+              <div>
+                <p className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Delivery</p>
+                <p className="text-xs md:text-sm font-black text-slate-900 tracking-tight">Real-time Tracking</p>
+              </div>
             </div>
 
             {/* Background Blob */}
