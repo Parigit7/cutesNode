@@ -198,7 +198,7 @@ function AddOrderPage() {
                   <li key={item.id} className="flex items-center justify-between p-3 hover:bg-slate-50">
                     <div>
                       <p className="font-semibold text-slate-950">{item.code} - {item.title}</p>
-                      <p className="text-xs text-slate-500">${item.price.toFixed(2)}</p>
+                      <p className="text-xs text-slate-500">Rs. {item.price.toFixed(2)}</p>
                     </div>
                     <button
                       type="button"
@@ -252,7 +252,7 @@ function AddOrderPage() {
 
               <div className="flex items-center justify-between pt-2">
                 <p className="font-semibold text-slate-950">
-                  Total: ${(selectedItem.price * (parseInt(quantity) || 0)).toFixed(2)}
+                  Total: Rs. {(selectedItem.price * (parseInt(quantity) || 0)).toFixed(2)}
                 </p>
                 <button
                   type="button"
@@ -356,7 +356,7 @@ function AddOrderPage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-4">
-                      <span className="font-semibold">${item.totalPrice.toFixed(2)}</span>
+                      <span className="font-semibold">Rs. {item.totalPrice.toFixed(2)}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveItem(index)}
@@ -371,7 +371,7 @@ function AddOrderPage() {
             )}
             
             <div className="text-right text-lg font-bold text-slate-950">
-              Grand Total: ${ (orderItems.reduce((acc, curr) => acc + curr.totalPrice, 0) + (parseFloat(boxPrice) || 0)).toFixed(2) }
+              Grand Total: Rs. { (orderItems.reduce((acc, curr) => acc + curr.totalPrice, 0) + (parseFloat(boxPrice) || 0)).toFixed(2) }
             </div>
           </div>
 

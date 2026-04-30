@@ -172,7 +172,7 @@ function SalesOrdersPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">{order.packingType}</td>
-                  <td className="px-6 py-4">{order.boxPrice ? `$${order.boxPrice.toFixed(2)}` : 'N/A'}</td>
+                  <td className="px-6 py-4">{order.boxPrice ? `Rs. ${order.boxPrice.toFixed(2)}` : 'N/A'}</td>
                   <td className="px-6 py-4">{order.orderItems?.length || 0}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
@@ -233,25 +233,25 @@ function SalesOrdersPage() {
               </div>
 
               <div className="p-6 space-y-8">
-                {/* 1. Staff Accountability */}
-                <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-slate-100 bg-slate-50 p-5">
-                  <div>
-                    <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Sales Person (Created)</p>
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-full bg-brand/20 flex items-center justify-center text-brand text-xs font-bold">
+                {/* 1. Staff Accountability (Smaller) */}
+                <div className="flex flex-wrap gap-x-8 gap-y-3 rounded-2xl border border-slate-100 bg-slate-50/50 p-3 px-5">
+                  <div className="flex items-center gap-2">
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Sales:</p>
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-6 w-6 rounded-full bg-brand/10 flex items-center justify-center text-brand text-[10px] font-bold">
                         {order.createdBy?.charAt(0).toUpperCase() || 'S'}
                       </div>
-                      <p className="font-bold text-slate-950">{order.createdBy || 'Unknown'}</p>
+                      <p className="text-sm font-semibold text-slate-700">{order.createdBy || 'Unknown'}</p>
                     </div>
                   </div>
                   {order.packedBy && (
-                    <div>
-                      <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Package Manager (Packed)</p>
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">
+                    <div className="flex items-center gap-2 border-l border-slate-200 pl-8">
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Packed:</p>
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-[10px] font-bold">
                           {order.packedBy?.charAt(0).toUpperCase() || 'P'}
                         </div>
-                        <p className="font-bold text-slate-950">{order.packedBy}</p>
+                        <p className="text-sm font-semibold text-slate-700">{order.packedBy}</p>
                       </div>
                     </div>
                   )}
@@ -284,7 +284,7 @@ function SalesOrdersPage() {
                           </div>
                         </div>
                         <div className="text-right text-xl font-bold text-slate-950">
-                          ${item.totalPrice.toFixed(2)}
+                          Rs. {item.totalPrice.toFixed(2)}
                         </div>
                       </div>
                     ))}
@@ -302,14 +302,14 @@ function SalesOrdersPage() {
                       {order.boxPrice != null && (
                         <div>
                           <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Box Price</p>
-                          <p className="text-lg font-bold text-slate-950">${order.boxPrice.toFixed(2)}</p>
+                          <p className="text-lg font-bold text-slate-950">Rs. {order.boxPrice.toFixed(2)}</p>
                         </div>
                       )}
                     </div>
                     <div className="flex flex-col justify-center items-end border-t sm:border-t-0 sm:border-l border-slate-200 pt-4 sm:pt-0 sm:pl-6">
                       <p className="text-sm text-slate-500 font-semibold mb-1">Grand Total</p>
                       <p className="text-4xl font-black text-brand">
-                        ${(
+                        Rs. {(
                           (order.orderItems?.reduce((sum, item) => sum + item.totalPrice, 0) || 0) + 
                           (order.boxPrice || 0)
                         ).toFixed(2)}

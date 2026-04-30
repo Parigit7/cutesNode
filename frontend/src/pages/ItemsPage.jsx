@@ -794,7 +794,7 @@ function ItemsPage() {
                   <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-800">{item.code}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-2xl font-semibold text-slate-950">${item.price.toFixed(2)}</span>
+                  <span className="text-2xl font-semibold text-slate-950">Rs. {item.price.toFixed(2)}</span>
                   <span className="rounded-full bg-brand/10 px-3 py-1 text-sm font-semibold text-brand">In stock</span>
                 </div>
                 <div className="flex items-center gap-3">
