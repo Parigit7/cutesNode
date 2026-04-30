@@ -49,13 +49,13 @@ function App() {
     <div className="min-h-screen bg-white text-slate-950 font-sans">
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
         <div className="flex w-full items-center justify-between gap-4 px-5 py-2 lg:px-8">
-          <Link to="/" className="flex items-center gap-4 hover:opacity-90 transition">
-            <div className="h-20 w-20 md:h-24 md:w-24 overflow-hidden rounded-full border border-slate-100 shadow-sm bg-white">
-              <img src="/logo.png" alt="Cutes.lk Logo" className="h-full w-full object-cover" />
+          <Link to="/" className="flex items-center gap-3 md:gap-5 hover:opacity-90 transition min-w-0 py-1">
+            <div className="h-16 w-16 md:h-28 md:w-28 flex-shrink-0 overflow-hidden rounded-2xl border-2 border-brand/10 shadow-lg bg-white p-1">
+              <img src="/logo.png" alt="Cutes.lk Logo" className="h-full w-full object-contain" />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[#a53973] leading-none">Cutes.lk</h1>
-              <p className="text-[#a53973]/60 text-[10px] md:text-xs font-medium uppercase tracking-widest mt-1">Management Portal</p>
+            <div className="flex flex-col truncate">
+              <h1 className="text-xl md:text-3xl font-black tracking-tight text-[#a53973] leading-none truncate">Cutes.lk</h1>
+              <p className="text-[#a53973]/60 text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] mt-1.5 truncate">Management Portal</p>
             </div>
           </Link>
 
