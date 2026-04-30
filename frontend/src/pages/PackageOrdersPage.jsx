@@ -261,8 +261,14 @@ function PackageOrdersPage() {
                         </div>
                         <div className="flex-grow">
                           <p className="font-semibold text-slate-950 text-lg">{item.itemCode} - {item.itemTitle}</p>
-                          <div className="flex gap-6 text-sm text-slate-600 mt-2 bg-slate-50 inline-flex px-3 py-1.5 rounded-lg">
-                            <span>Color: <span className="font-bold text-slate-950">{item.color || 'N/A'}</span></span>
+                          <div className="flex gap-6 text-sm text-slate-600 mt-2 bg-slate-50 inline-flex px-3 py-1.5 rounded-lg items-center">
+                            <span className="flex items-center gap-1.5">
+                              Color: 
+                              {item.color && item.color !== 'N/A' && (
+                                <span className="w-3 h-3 rounded-full border border-slate-300 inline-block shadow-sm" style={{ backgroundColor: item.color }}></span>
+                              )}
+                              <span className="font-bold text-slate-950">{item.color || 'N/A'}</span>
+                            </span>
                             <span>Qty: <span className="font-bold text-slate-950">{item.quantity}</span></span>
                           </div>
                         </div>

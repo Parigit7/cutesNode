@@ -219,16 +219,23 @@ function AddOrderPage() {
               
               <div className="grid gap-4 sm:grid-cols-2">
                 {selectedItem.colors && selectedItem.colors.length > 0 && (
-                  <label className="grid gap-2 text-sm text-slate-600">
-                    Color
-                    <select
-                      value={selectedColor}
-                      onChange={(e) => setSelectedColor(e.target.value)}
-                      className="rounded-3xl border border-slate-200 bg-white px-4 py-2 text-slate-950 outline-none"
-                    >
-                      {selectedItem.colors.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
-                    </select>
-                  </label>
+                  <div className="grid gap-2 text-sm text-slate-600">
+                    <span>Color</span>
+                    <div className="flex flex-wrap gap-3">
+                      {selectedItem.colors.map(c => (
+                        <button
+                          key={c.name}
+                          type="button"
+                          onClick={() => setSelectedColor(c.name)}
+                          className={`h-8 w-8 rounded-full border-2 transition-all ${
+                            selectedColor === c.name ? 'border-slate-900 scale-125 shadow-md' : 'border-slate-200 hover:scale-110'
+                          }`}
+                          style={{ backgroundColor: c.name }}
+                          title={c.name}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 )}
                 
                 <label className="grid gap-2 text-sm text-slate-600">
@@ -341,7 +348,12 @@ function AddOrderPage() {
                   <li key={index} className="flex items-center justify-between p-3 text-sm">
                     <div>
                       <p className="font-semibold">{item.itemCode}</p>
-                      <p className="text-slate-500">{item.color} x {item.quantity}</p>
+                      <p className="text-slate-500 flex items-center gap-1.5 mt-0.5">
+                        {item.color && item.color !== 'N/A' && (
+                          <span className="w-3 h-3 rounded-full border border-slate-300 inline-block shadow-sm" style={{ backgroundColor: item.color }}></span>
+                        )}
+                        <span>{item.color} x {item.quantity}</span>
+                      </p>
                     </div>
                     <div className="flex items-center gap-4">
                       <span className="font-semibold">${item.totalPrice.toFixed(2)}</span>
