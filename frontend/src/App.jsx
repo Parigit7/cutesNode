@@ -13,8 +13,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
-      <header className="w-full border-b border-slate-200 bg-white shadow-sm">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
+      <header className="w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
+        <div className="flex w-full items-center justify-between gap-4 px-5 py-3 lg:px-8">
           <div className="flex items-center gap-4">
             <div className="grid h-14 w-14 place-items-center rounded-2xl bg-slate-950 text-white text-2xl font-black">
               C
@@ -62,7 +62,7 @@ function App() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl px-6 py-6">
+      <div className="w-full px-4 py-4 lg:px-8">
         <main>
           <Outlet />
         </main>

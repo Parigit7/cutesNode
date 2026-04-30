@@ -29,7 +29,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl rounded-[2rem] bg-white p-10 shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
+    <div className="w-full rounded-[1.5rem] bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] lg:p-8">
       <div className="space-y-3">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand">Secure login</p>
         <h2 className="text-3xl font-semibold text-slate-950">Sign in to Cutes.lk</h2>

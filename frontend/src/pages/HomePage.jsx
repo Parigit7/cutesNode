@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 function HomePage() {
   return (
-    <div className="mx-auto max-w-6xl space-y-10 rounded-[2rem] bg-white p-10 shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
+    <div className="w-full space-y-8 rounded-[1.5rem] bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] lg:p-8">
       <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
         <div className="space-y-6">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand">Cutes.lk dashboard</p>
