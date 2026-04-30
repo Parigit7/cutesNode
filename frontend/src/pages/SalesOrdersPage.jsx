@@ -233,30 +233,10 @@ function SalesOrdersPage() {
               </div>
 
               <div className="p-6 space-y-8">
-                {/* Order Meta Info */}
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                    <p className="text-xs text-slate-500">Packing Type</p>
-                    <p className="font-semibold text-slate-950">{order.packingType}</p>
-                  </div>
-                  {order.boxPrice != null && (
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                      <p className="text-xs text-slate-500">Box Price</p>
-                      <p className="font-semibold text-slate-950">${order.boxPrice.toFixed(2)}</p>
-                    </div>
-                  )}
-                  {order.message && (
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:col-span-2">
-                      <p className="text-xs text-slate-500">Message</p>
-                      <p className="font-semibold text-slate-950">{order.message}</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Staff Accountability */}
+                {/* 1. Staff Accountability */}
                 <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-slate-100 bg-slate-50 p-5">
                   <div>
-                    <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Created By (Sales)</p>
+                    <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Sales Person (Created)</p>
                     <div className="flex items-center gap-2">
                       <div className="h-8 w-8 rounded-full bg-brand/20 flex items-center justify-center text-brand text-xs font-bold">
                         {order.createdBy?.charAt(0).toUpperCase() || 'S'}
@@ -266,7 +246,7 @@ function SalesOrdersPage() {
                   </div>
                   {order.packedBy && (
                     <div>
-                      <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Packed By (Package)</p>
+                      <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Package Manager (Packed)</p>
                       <div className="flex items-center gap-2">
                         <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xs font-bold">
                           {order.packedBy?.charAt(0).toUpperCase() || 'P'}
@@ -277,21 +257,7 @@ function SalesOrdersPage() {
                   )}
                 </div>
 
-                {/* Courier Info for Packed and Sent Orders */}
-                {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
-                  <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-brand/20 bg-brand/5 p-5">
-                    <div>
-                      <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider mb-1">Courier Name</p>
-                      <p className={`text-xl font-bold text-slate-950`}>{order.courierName}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider mb-1">Tracking Number</p>
-                      <p className="text-xl font-semibold text-slate-950">{order.courierNumber}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Items List */}
+                {/* 2. Items List */}
                 <div>
                   <h4 className="text-lg font-semibold text-slate-950 mb-4">Order Items</h4>
                   <div className="grid gap-3">
@@ -317,13 +283,62 @@ function SalesOrdersPage() {
                             <span>Qty: <span className="font-bold text-slate-950">{item.quantity}</span></span>
                           </div>
                         </div>
-                        <div className="text-right text-xl font-bold text-brand">
+                        <div className="text-right text-xl font-bold text-slate-950">
                           ${item.totalPrice.toFixed(2)}
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
+
+                {/* 3. Packing Details, Box Price, and Grand Total */}
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Packing Type</p>
+                        <p className="text-lg font-bold text-slate-950">{order.packingType}</p>
+                      </div>
+                      {order.boxPrice != null && (
+                        <div>
+                          <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Box Price</p>
+                          <p className="text-lg font-bold text-slate-950">${order.boxPrice.toFixed(2)}</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col justify-center items-end border-t sm:border-t-0 sm:border-l border-slate-200 pt-4 sm:pt-0 sm:pl-6">
+                      <p className="text-sm text-slate-500 font-semibold mb-1">Grand Total</p>
+                      <p className="text-4xl font-black text-brand">
+                        ${(
+                          (order.orderItems?.reduce((sum, item) => sum + item.totalPrice, 0) || 0) + 
+                          (order.boxPrice || 0)
+                        ).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Message */}
+                {order.message && (
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                    <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-2">Message</p>
+                    <p className="text-slate-950 leading-relaxed italic">"{order.message}"</p>
+                  </div>
+                )}
+
+                {/* 5. Courier Details */}
+                {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
+                  <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-brand/20 bg-brand/5 p-5">
+                    <div>
+                      <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider mb-1">Courier Name</p>
+                      <p className={`text-xl font-bold text-slate-950`}>{order.courierName}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider mb-1">Tracking Number</p>
+                      <p className="text-xl font-semibold text-slate-950">{order.courierNumber}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
