@@ -770,7 +770,7 @@ function ItemsPage() {
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-4">
         {filteredItems.length === 0 ? (
           <div className="col-span-full rounded-[2rem] border border-slate-200 bg-slate-50 p-10 text-center text-slate-600">
             No items found for that category or item code.

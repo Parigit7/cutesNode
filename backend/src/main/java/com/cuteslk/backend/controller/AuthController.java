@@ -75,4 +75,39 @@ public class AuthController {
                 .map(user -> new UserDto(user.getId(), user.getUsername(), user.getRole(), user.isActive()))
                 .collect(Collectors.toList());
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/users/update")
+    public ResponseEntity<?> updateUser(@Validated @RequestBody UserDto dto) {
+        if (dto.getId() == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User id is required"));
+        }
+
+        User user = userService.findById(dto.getId()).orElse(null);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
+        }
+
+        if (dto.getUsername() != null && !dto.getUsername().isBlank()) {
+            Long userId = user.getId();
+            if (userService.findByUsername(dto.getUsername())
+                    .filter(existing -> !existing.getId().equals(userId))
+                    .isPresent()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Username already exists"));
+            }
+            user.setUsername(dto.getUsername().trim());
+        }
+
+        if (dto.getRole() != null && !dto.getRole().isBlank()) {
+            user.setRole(dto.getRole().toUpperCase());
+        }
+        user.setActive(dto.isActive());
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            user.setPassword(dto.getPassword());
+        }
+
+        user = userService.save(user);
+        return ResponseEntity.ok(new UserDto(user.getId(), user.getUsername(), user.getRole(), user.isActive()));
+    }
 }
