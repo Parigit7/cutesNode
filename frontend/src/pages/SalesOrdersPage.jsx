@@ -9,6 +9,8 @@ function SalesOrdersPage() {
   const [success, setSuccess] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState('');
+  const [activeTab, setActiveTab] = useState('ALL'); // ALL, PENDING, PACKED, SEND
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
   const navigate = useNavigate();
 
   const loadOrders = async () => {
@@ -60,13 +62,35 @@ function SalesOrdersPage() {
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand">Order Management</p>
           <h2 className="text-3xl font-semibold text-slate-950">Sales Orders</h2>
         </div>
-        <button
-          onClick={() => navigate('/sales/orders/add')}
-          className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-pink-300"
-        >
-          Add New Order
-        </button>
+        {!isAdmin && (
+          <button
+            onClick={() => navigate('/sales/orders/add')}
+            className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-pink-300"
+          >
+            Add New Order
+          </button>
+        )}
       </div>
+
+      {isAdmin && (
+        <div className="flex gap-4 border-b border-slate-200">
+          {['ALL', 'PENDING', 'PACKED', 'SEND'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-3 font-semibold transition ${activeTab === tab
+                ? 'border-b-2 border-brand text-slate-950'
+                : 'text-slate-500 hover:text-slate-700'
+                }`}
+            >
+              {tab === 'SEND' ? 'Sent' : tab.charAt(0) + tab.slice(1).toLowerCase()}
+              <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs">
+                {tab === 'ALL' ? orders.length : orders.filter(o => o.status === tab).length}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {error && <div className="rounded-3xl bg-rose-500/10 p-4 text-sm text-rose-700">{error}</div>}
       {success && <div className="rounded-3xl bg-brand/10 p-4 text-sm text-brand">{success}</div>}
@@ -126,7 +150,8 @@ function SalesOrdersPage() {
               const filteredOrders = orders.filter(o => {
                 const matchesSearch = o.orderId.toLowerCase().includes(searchQuery.toLowerCase());
                 const matchesDate = !dateFilter || o.requiredDate === dateFilter;
-                return matchesSearch && matchesDate;
+                const matchesTab = activeTab === 'ALL' || o.status === activeTab;
+                return matchesSearch && matchesDate && matchesTab;
               });
 
               if (filteredOrders.length === 0) {
@@ -138,48 +163,42 @@ function SalesOrdersPage() {
                   <td className="px-6 py-4 font-semibold text-slate-950">{order.orderId}</td>
                   <td className="px-6 py-4">{order.requiredDate}</td>
                   <td className="px-6 py-4">
-                    {isAdmin ? (
-                      <select
-                        value={order.status}
-                        onChange={(e) => handleStatusChange(order.orderId, e.target.value)}
-                        className="rounded-3xl border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 outline-none transition focus:border-brand"
-                      >
-                        <option value="PENDING">PENDING</option>
-                        <option value="PACKED">PACKED</option>
-                        <option value="SEND">SEND</option>
-                      </select>
-                    ) : (
-                      <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                        order.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
-                        order.status === 'PACKED' ? 'bg-blue-100 text-blue-700' :
-                        'bg-green-100 text-green-700'
-                      }`}>
-                        {order.status}
-                      </span>
-                    )}
+                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      order.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
+                      order.status === 'PACKED' ? 'bg-blue-100 text-blue-700' :
+                      'bg-green-100 text-green-700'
+                    }`}>
+                      {order.status}
+                    </span>
                   </td>
                   <td className="px-6 py-4">{order.packingType}</td>
                   <td className="px-6 py-4">{order.boxPrice ? `$${order.boxPrice.toFixed(2)}` : 'N/A'}</td>
                   <td className="px-6 py-4">{order.orderItems?.length || 0}</td>
                   <td className="px-6 py-4 text-right">
-                    {order.status === 'PENDING' || isAdmin ? (
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => navigate(`/sales/orders/edit/${order.orderId}`)}
-                          className="font-semibold text-blue-600 hover:text-blue-800"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(order.orderId)}
-                          className="font-semibold text-rose-600 hover:text-rose-800"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="text-slate-400">Locked</span>
-                    )}
+                    <div className="flex justify-end gap-2">
+                      <button
+                        onClick={() => setExpandedOrderId(order.orderId)}
+                        className="font-semibold text-slate-600 hover:text-slate-900"
+                      >
+                        View
+                      </button>
+                      {order.status === 'PENDING' && !isAdmin && (
+                        <>
+                          <button
+                            onClick={() => navigate(`/sales/orders/edit/${order.orderId}`)}
+                            className="font-semibold text-blue-600 hover:text-blue-800"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(order.orderId)}
+                            className="font-semibold text-rose-600 hover:text-rose-800"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ));
@@ -187,6 +206,105 @@ function SalesOrdersPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Modal Overlay */}
+      {expandedOrderId && (() => {
+        const order = orders.find(o => o.orderId === expandedOrderId);
+        if (!order) return null;
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" onClick={() => setExpandedOrderId(null)}>
+            <div
+              className="bg-white rounded-[2rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="sticky top-0 bg-white/95 backdrop-blur border-b border-slate-200 p-6 flex items-center justify-between z-10">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-brand">Order Details</p>
+                  <h3 className="text-2xl font-bold text-slate-950">{order.orderId}</h3>
+                </div>
+                <button
+                  onClick={() => setExpandedOrderId(null)}
+                  className="p-3 bg-slate-100 rounded-full text-slate-500 hover:bg-slate-200 transition"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="p-6 space-y-8">
+                {/* Order Meta Info */}
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <p className="text-xs text-slate-500">Packing Type</p>
+                    <p className="font-semibold text-slate-950">{order.packingType}</p>
+                  </div>
+                  {order.boxPrice != null && (
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <p className="text-xs text-slate-500">Box Price</p>
+                      <p className="font-semibold text-slate-950">${order.boxPrice.toFixed(2)}</p>
+                    </div>
+                  )}
+                  {order.message && (
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:col-span-2">
+                      <p className="text-xs text-slate-500">Message</p>
+                      <p className="font-semibold text-slate-950">{order.message}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Courier Info for Packed and Sent Orders */}
+                {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
+                  <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-brand/20 bg-brand/5 p-5">
+                    <div>
+                      <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider mb-1">Courier Name</p>
+                      <p className={`text-xl font-bold text-slate-950`}>{order.courierName}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider mb-1">Tracking Number</p>
+                      <p className="text-xl font-semibold text-slate-950">{order.courierNumber}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Items List */}
+                <div>
+                  <h4 className="text-lg font-semibold text-slate-950 mb-4">Order Items</h4>
+                  <div className="grid gap-3">
+                    {order.orderItems?.map(item => (
+                      <div key={item.id} className="flex items-center gap-5 rounded-2xl border border-slate-100 p-4 shadow-sm shadow-slate-100/50">
+                        <div className="h-20 w-20 overflow-hidden rounded-xl bg-slate-100 flex-shrink-0">
+                          {item.itemImage ? (
+                            <img src={item.itemImage} alt={item.itemTitle} className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">No Img</div>
+                          )}
+                        </div>
+                        <div className="flex-grow">
+                          <p className="font-semibold text-slate-950 text-lg">{item.itemCode} - {item.itemTitle}</p>
+                          <div className="flex gap-6 text-sm text-slate-600 mt-2 bg-slate-50 inline-flex px-3 py-1.5 rounded-lg items-center">
+                            <span className="flex items-center gap-1.5">
+                              Color:
+                              {item.color && item.color !== 'N/A' && (
+                                <span className="w-3 h-3 rounded-full border border-slate-300 inline-block shadow-sm" style={{ backgroundColor: item.color }}></span>
+                              )}
+                              <span className="font-bold text-slate-950">{item.color || 'N/A'}</span>
+                            </span>
+                            <span>Qty: <span className="font-bold text-slate-950">{item.quantity}</span></span>
+                          </div>
+                        </div>
+                        <div className="text-right text-xl font-bold text-brand">
+                          ${item.totalPrice.toFixed(2)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
