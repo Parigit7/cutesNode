@@ -5,7 +5,7 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   const stored = typeof window !== 'undefined' ? localStorage.getItem('cutes-user') : null;
   const currentUser = stored ? JSON.parse(stored) : null;
   const isAdminLoggedIn = currentUser?.role === 'ADMIN';
@@ -46,7 +46,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 font-sans">
+    <div className="min-h-screen bg-white text-slate-950 font-sans">
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
         <div className="flex w-full items-center justify-between gap-4 px-5 py-2 lg:px-8">
           <Link to="/" className="flex items-center gap-4 hover:opacity-90 transition">
@@ -67,11 +67,10 @@ function App() {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
-                    isActive 
-                      ? 'bg-[#a53973] text-white shadow-md shadow-[#a53973]/20' 
+                  className={`rounded-full px-5 py-2 text-sm font-semibold transition ${isActive
+                      ? 'bg-[#a53973] text-white shadow-md shadow-[#a53973]/20'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                  }`}
+                    }`}
                 >
                   {link.name}
                 </Link>
@@ -117,11 +116,10 @@ function App() {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`flex items-center justify-between rounded-xl px-5 py-4 text-sm font-bold transition ${
-                    location.pathname === link.path 
-                      ? 'bg-[#a53973]/10 text-[#a53973]' 
+                  className={`flex items-center justify-between rounded-xl px-5 py-4 text-sm font-bold transition ${location.pathname === link.path
+                      ? 'bg-[#a53973]/10 text-[#a53973]'
                       : 'text-slate-600 hover:bg-slate-50'
-                  }`}
+                    }`}
                 >
                   {link.name}
                   {location.pathname === link.path && <div className="h-1.5 w-1.5 rounded-full bg-[#a53973]" />}
@@ -153,16 +151,7 @@ function App() {
           <Outlet />
         </main>
 
-        <footer className="mt-12 border-t border-slate-200 pt-12 pb-8 text-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-12 w-12 grayscale opacity-50 rounded-full overflow-hidden">
-              <img src="/logo.png" alt="Cutes.lk Logo" className="h-full w-full object-cover" />
-            </div>
-            <p className="text-xs font-bold text-slate-400 tracking-widest uppercase">
-              © {new Date().getFullYear()} Cutes.lk Management System
-            </p>
-          </div>
-        </footer>
+
       </div>
     </div>
   );

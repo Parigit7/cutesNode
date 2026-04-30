@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -13,11 +13,11 @@ html, body, #root {
 
 body {
   margin: 0;
-  background: radial-gradient(circle at top, rgba(213,156,163,0.16), transparent 20%), #090909;
-  color: #f8fafc;
+  background: radial-gradient(circle at top, rgba(165, 57, 115, 0.04), transparent 40%), #ffffff;
+  color: #0f172a;
 }
 
 ::selection {
-  background: rgba(213, 156, 163, 0.4);
-  color: #111827;
+  background: rgba(165, 57, 115, 0.2);
+  color: #a53973;
 }
