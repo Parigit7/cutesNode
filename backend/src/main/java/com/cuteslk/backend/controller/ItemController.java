@@ -75,13 +75,13 @@ public class ItemController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<ItemDto> updateItem(@PathVariable Long id, @Validated @RequestBody ItemRequest request) {
+    public ResponseEntity<ItemDto> updateItem(@PathVariable("id") Long id, @Validated @RequestBody ItemRequest request) {
         return updateItemInternal(id, request);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/update")
-    public ResponseEntity<ItemDto> updateItemViaPost(@PathVariable Long id, @Validated @RequestBody ItemRequest request) {
+    public ResponseEntity<ItemDto> updateItemViaPost(@PathVariable("id") Long id, @Validated @RequestBody ItemRequest request) {
         return updateItemInternal(id, request);
     }
 
@@ -119,13 +119,13 @@ public class ItemController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteItem(@PathVariable("id") Long id) {
         return deleteItemInternal(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/delete")
-    public ResponseEntity<Void> deleteItemViaPost(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteItemViaPost(@PathVariable("id") Long id) {
         return deleteItemInternal(id);
     }
 

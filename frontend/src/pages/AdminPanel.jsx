@@ -4,7 +4,7 @@ import api from '../services/api';
 function AdminPanel() {
   const [currentUserName, setCurrentUserName] = useState('Admin');
   const [username, setUsername] = useState('');
-  const [role, setRole] = useState('SALES');
+  const [role, setRole] = useState('SALES_MANAGEMENT');
   const [active, setActive] = useState(true);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -46,7 +46,7 @@ function AdminPanel() {
       });
       setMessage(`Created ${data.role} user: ${data.username}`);
       setUsername('');
-      setRole('SALES');
+      setRole('SALES_MANAGEMENT');
       setActive(true);
       loadUsers();
     } catch (err) {
@@ -88,7 +88,7 @@ function AdminPanel() {
               value={role}
               onChange={(event) => setRole(event.target.value)}>
               <option value="ADMIN">Admin</option>
-              <option value="SALES">Sales Management</option>
+              <option value="SALES_MANAGEMENT">Sales Management</option>
               <option value="PACKAGE">Package Management</option>
             </select>
           </label>

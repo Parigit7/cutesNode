@@ -32,7 +32,15 @@ function App() {
                 onClick={handleAdminLogout}
                 className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-left text-sm transition hover:border-slate-300 hover:text-slate-950"
               >
-                Home
+                Logout
+              </button>
+            ) : currentUser?.role === 'SALES_MANAGEMENT' ? (
+              <button
+                type="button"
+                onClick={handleAdminLogout}
+                className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-left text-sm transition hover:border-slate-300 hover:text-slate-950"
+              >
+                Logout
               </button>
             ) : (
               <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/">
@@ -45,10 +53,19 @@ function App() {
                 <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/admin/items">
                   Items
                 </Link>
-                <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/admin/employees">
+                <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/admin">
                   Employees
                 </Link>
-                <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/admin">
+                <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/sales">
+                  Orders
+                </Link>
+              </>
+            ) : currentUser?.role === 'SALES_MANAGEMENT' ? (
+              <>
+                <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/sales/items">
+                  View Items
+                </Link>
+                <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/sales">
                   Orders
                 </Link>
               </>

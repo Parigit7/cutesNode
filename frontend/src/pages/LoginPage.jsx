@@ -20,6 +20,8 @@ function LoginPage() {
       setMessage(`Welcome back, ${data.username}. Role: ${data.role}`);
       if (data.role === 'ADMIN') {
         navigate('/admin');
+      } else if (data.role === 'SALES_MANAGEMENT') {
+        navigate('/sales');
       } else {
         navigate('/');
       }
