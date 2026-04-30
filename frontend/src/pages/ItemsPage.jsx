@@ -74,6 +74,7 @@ function ItemsPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [editingItemId, setEditingItemId] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [savingItem, setSavingItem] = useState(false);
   const [deletingItemId, setDeletingItemId] = useState(null);
 
@@ -137,6 +138,44 @@ function ItemsPage() {
     setColorRows([{ color: '#d59ca3', qty: '' }]);
     setSelectedCategory(categories[0]?.name || initialCategories[0].name);
     setEditingItemId(null);
+  };
+
+  const buildItemPayload = (itemCode) => {
+    if (!title.trim() || !price || Number(price) <= 0) {
+      setError('Please enter a valid item title and price.');
+      return null;
+    }
+
+    const selectedCat = categories.find((cat) => cat.name === selectedCategory);
+    if (!selectedCat) {
+      setError('Please select a valid category.');
+      return null;
+    }
+
+    const colorDetails = colorRows
+      .filter((row) => row.qty && Number(row.qty) > 0)
+      .map((row) => ({ name: row.color.toUpperCase(), qty: Number(row.qty) }));
+
+    if (!colorDetails.length && !defaultQty) {
+      setError('Add at least one color quantity or a default quantity.');
+      return null;
+    }
+
+    const parsedDefaultQty = Number(defaultQty);
+    const colors = [...colorDetails];
+    if (parsedDefaultQty > 0) {
+      colors.unshift({ name: 'Default', qty: parsedDefaultQty });
+    }
+
+    return {
+      code: itemCode,
+      title: title.trim(),
+      category: selectedCategory,
+      categoryCode: selectedCat.code,
+      price: Number(price),
+      image: imagePreview || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80',
+      colors,
+    };
   };
 
   const handleAddColorRow = () => {
@@ -207,63 +246,50 @@ function ItemsPage() {
     setError('');
     setSuccess('');
     setSavingItem(true);
-
-    if (!title.trim() || !price || Number(price) <= 0) {
-      setError('Please enter a valid item title and price.');
+    const payload = buildItemPayload(nextItemCode);
+    if (!payload) {
       setSavingItem(false);
       return;
     }
-
-    const selectedCat = categories.find((cat) => cat.name === selectedCategory);
-    if (!selectedCat) {
-      setError('Please select a valid category.');
-      setSavingItem(false);
-      return;
-    }
-
-    const colorDetails = colorRows
-      .filter((row) => row.qty && Number(row.qty) > 0)
-      .map((row) => ({ name: row.color.toUpperCase(), qty: Number(row.qty) }));
-
-    if (!colorDetails.length && !defaultQty) {
-      setError('Add at least one color quantity or a default quantity.');
-      setSavingItem(false);
-      return;
-    }
-
-    const parsedDefaultQty = Number(defaultQty);
-    const colors = [...colorDetails];
-    if (parsedDefaultQty > 0) {
-      colors.unshift({ name: 'Default', qty: parsedDefaultQty });
-    }
-
-    const payload = {
-      code: editingItemId ? items.find((item) => item.id === editingItemId)?.code || nextItemCode : nextItemCode,
-      title: title.trim(),
-      category: selectedCategory,
-      categoryCode: selectedCat.code,
-      price: Number(price),
-      image: imagePreview || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80',
-      colors,
-    };
 
     try {
-      const response = editingItemId
-        ? await api.post('/items', { id: editingItemId, ...payload })
-        : await api.post('/items', payload);
+      const response = await api.post('/items', payload);
       const savedItem = response.data;
-      setItems((prev) => {
-        if (editingItemId) {
-          return prev.map((item) => (item.id === savedItem.id ? savedItem : item));
-        }
-        return [savedItem, ...prev];
-      });
+      setItems((prev) => [savedItem, ...prev]);
       resetItemForm();
-      setSuccess(editingItemId ? `Item ${savedItem.code} updated successfully.` : `Item ${savedItem.code} added successfully.`);
+      setSuccess(`Item ${savedItem.code} added successfully.`);
       setShowForm(false);
     } catch (error) {
       console.error('Item save failed', error);
       setError(error.response?.data?.error || error.response?.data?.message || 'Unable to save item. Please try again.');
+    } finally {
+      setSavingItem(false);
+    }
+  };
+
+  const handleUpdateItem = async () => {
+    if (!editingItemId) return;
+    setError('');
+    setSuccess('');
+    setSavingItem(true);
+
+    const existingCode = items.find((item) => item.id === editingItemId)?.code;
+    const payload = buildItemPayload(existingCode || nextItemCode);
+    if (!payload) {
+      setSavingItem(false);
+      return;
+    }
+
+    try {
+      const response = await api.post('/items', { id: editingItemId, ...payload });
+      const savedItem = response.data;
+      setItems((prev) => prev.map((item) => (item.id === savedItem.id ? savedItem : item)));
+      setSuccess(`Item ${savedItem.code} updated successfully.`);
+      setShowEditModal(false);
+      resetItemForm();
+    } catch (error) {
+      console.error('Item update failed', error);
+      setError(error.response?.data?.error || error.response?.data?.message || 'Unable to update item. Please try again.');
     } finally {
       setSavingItem(false);
     }
@@ -283,7 +309,7 @@ function ItemsPage() {
     setSelectedCategory(item.category);
     setDefaultQty(defaultColor ? String(defaultColor.qty) : '');
     setColorRows(customColors.length ? customColors : [{ color: '#d59ca3', qty: '' }]);
-    setShowForm(true);
+    setShowEditModal(true);
     setError('');
     setSuccess('');
   };
@@ -300,7 +326,7 @@ function ItemsPage() {
       setItems((prev) => prev.filter((existing) => existing.id !== item.id));
       if (editingItemId === item.id) {
         resetItemForm();
-        setShowForm(false);
+        setShowEditModal(false);
       }
       setSuccess(`Item ${item.code} deleted successfully.`);
     } catch (deleteError) {
@@ -525,11 +551,7 @@ function ItemsPage() {
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-slate-500">
-                {editingItemId ? (
-                  <>Editing item <span className="font-semibold text-slate-900">{items.find((item) => item.id === editingItemId)?.code}</span>.</>
-                ) : (
-                  <>Item code will be generated as <span className="font-semibold text-slate-900">{nextItemCode}</span>.</>
-                )}
+                Item code will be generated as <span className="font-semibold text-slate-900">{nextItemCode}</span>.
               </div>
               <button
                 type="button"
@@ -537,7 +559,7 @@ function ItemsPage() {
                 disabled={savingItem}
                 className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-pink-300"
               >
-                {savingItem ? 'Saving...' : editingItemId ? 'Update item' : 'Save item'}
+                {savingItem ? 'Saving...' : 'Save item'}
               </button>
             </div>
 
@@ -545,6 +567,207 @@ function ItemsPage() {
             {success && <div className="rounded-3xl bg-brand/10 p-4 text-sm text-brand">{success}</div>}
           </div>
         </section>
+      )}
+
+      {showEditModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 px-4">
+          <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-2xl">
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand">Update item</p>
+                <h3 className="text-2xl font-semibold text-slate-950">
+                  Edit <span className="text-brand">{items.find((item) => item.id === editingItemId)?.code}</span>
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEditModal(false);
+                  resetItemForm();
+                }}
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="grid gap-6">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="grid gap-2 text-sm text-slate-600">
+                  Item title
+                  <input
+                    value={title}
+                    onChange={(event) => setTitle(event.target.value)}
+                    className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                    placeholder="Enter item title"
+                  />
+                </label>
+                <div className="grid gap-2 text-sm text-slate-600">
+                  <span>Upload image</span>
+                  <label className="group relative inline-flex cursor-pointer items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-50 px-5 py-4 text-slate-700 transition hover:border-brand hover:text-brand">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => handleImageUpload(event.target.files?.[0])}
+                      className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    />
+                    <span className="text-sm font-semibold">Choose file</span>
+                  </label>
+                </div>
+              </div>
+
+              {imagePreview && (
+                <div className="grid gap-3 rounded-3xl border border-slate-200 bg-white p-4 text-center">
+                  <p className="text-sm font-semibold text-slate-700">Image preview</p>
+                  <div className="mx-auto h-40 w-40 overflow-hidden rounded-full border border-slate-200 bg-slate-100">
+                    <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
+                  </div>
+                </div>
+              )}
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="grid gap-2 text-sm text-slate-600">
+                  Price
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={price}
+                    onChange={(event) => setPrice(event.target.value)}
+                    className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                    placeholder="0.00"
+                  />
+                </label>
+                <label className="grid gap-2 text-sm text-slate-600">
+                  Category
+                  <select
+                    value={selectedCategory}
+                    onChange={(event) => setSelectedCategory(event.target.value)}
+                    className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat.code} value={cat.name}>
+                        {cat.name} ({cat.code})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="grid gap-2 text-sm text-slate-600">
+                    Quantity without color
+                    <input
+                      type="number"
+                      min="0"
+                      value={defaultQty}
+                      onChange={(event) => setDefaultQty(event.target.value)}
+                      className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                      placeholder="e.g. 10"
+                    />
+                  </label>
+                  <div className="flex items-end gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowCategoryForm((value) => !value)}
+                      className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-950 transition hover:border-brand hover:bg-brand/10"
+                    >
+                      {showCategoryForm ? 'Hide category form' : 'Add category'}
+                    </button>
+                    <span className="text-xs text-slate-500">New category code is used for new item codes.</span>
+                  </div>
+                </div>
+
+                {showCategoryForm && (
+                  <div className="grid gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-6">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="grid gap-2 text-sm text-slate-600">
+                        Category name
+                        <input
+                          value={newCategoryName}
+                          onChange={(event) => setNewCategoryName(event.target.value)}
+                          className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                          placeholder="HR, BR, etc."
+                        />
+                      </label>
+                      <label className="grid gap-2 text-sm text-slate-600">
+                        Category code
+                        <input
+                          value={newCategoryCode}
+                          onChange={(event) => setNewCategoryCode(event.target.value)}
+                          className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                          placeholder="Two-letter code"
+                        />
+                      </label>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAddCategory}
+                      className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-pink-300"
+                    >
+                      Save category
+                    </button>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Color quantities</p>
+                  <button
+                    type="button"
+                    onClick={handleAddColorRow}
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:border-slate-300 hover:bg-slate-100"
+                  >
+                    + Add color
+                  </button>
+                </div>
+                <div className="grid gap-4">
+                  {colorRows.map((row, index) => (
+                    <div key={index} className="grid items-end gap-4 sm:grid-cols-[auto_1fr_auto]">
+                      <label className="grid gap-2 text-sm text-slate-600">
+                        Color picker
+                        <input
+                          type="color"
+                          value={row.color}
+                          onChange={(event) => handleColorChange(index, 'color', event.target.value)}
+                          className="h-12 w-full cursor-pointer rounded-3xl border border-slate-200 bg-white p-2"
+                        />
+                      </label>
+                      <label className="grid gap-2 text-sm text-slate-600">
+                        Quantity
+                        <input
+                          type="number"
+                          min="0"
+                          value={row.qty}
+                          onChange={(event) => handleColorChange(index, 'qty', event.target.value)}
+                          className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                          placeholder="e.g. 7"
+                        />
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">{row.color}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="text-sm text-slate-500">
+                  Updating item code <span className="font-semibold text-slate-900">{items.find((item) => item.id === editingItemId)?.code}</span>.
+                </div>
+                <button
+                  type="button"
+                  onClick={handleUpdateItem}
+                  disabled={savingItem}
+                  className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-pink-300"
+                >
+                  {savingItem ? 'Saving...' : 'Update item'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
