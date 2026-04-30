@@ -176,154 +176,180 @@ function PackageOrdersPage() {
                   }`}>
                     {order.status}
                   </span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 text-slate-400 transition-transform ${expandedOrderId === order.orderId ? 'rotate-180' : ''}`} viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+                  <button className="rounded-full bg-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-300">
+                    View
+                  </button>
                 </div>
               </div>
-
-              {expandedOrderId === order.orderId && (
-                <div className="border-t border-slate-200 bg-white p-5 space-y-6">
-                  
-                  {/* Order Meta Info */}
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                      <p className="text-xs text-slate-500">Packing Type</p>
-                      <p className="font-semibold text-slate-950">{order.packingType}</p>
-                    </div>
-                    {order.boxPrice != null && (
-                      <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
-                        <p className="text-xs text-slate-500">Box Price</p>
-                        <p className="font-semibold text-slate-950">${order.boxPrice.toFixed(2)}</p>
-                      </div>
-                    )}
-                    {order.message && (
-                      <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:col-span-2">
-                        <p className="text-xs text-slate-500">Message</p>
-                        <p className="font-semibold text-slate-950">{order.message}</p>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Courier Info for Packed and Sent Orders */}
-                  {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
-                    <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-brand/20 bg-brand/5 p-4">
-                      <div>
-                        <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider">Courier Name</p>
-                        <p className={`text-lg ${getCourierColor(order.courierName)}`}>{order.courierName}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider">Tracking Number</p>
-                        <p className="text-lg font-semibold text-slate-950">{order.courierNumber}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Items List */}
-                  <div>
-                    <h4 className="font-semibold text-slate-950 mb-3">Order Items</h4>
-                    <div className="grid gap-3">
-                      {order.orderItems?.map(item => (
-                        <div key={item.id} className="flex items-center gap-4 rounded-2xl border border-slate-100 p-3">
-                          <div className="h-16 w-16 overflow-hidden rounded-xl bg-slate-100 flex-shrink-0">
-                            {item.itemImage ? (
-                              <img src={item.itemImage} alt={item.itemTitle} className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">No Img</div>
-                            )}
-                          </div>
-                          <div className="flex-grow">
-                            <p className="font-semibold text-slate-950">{item.itemCode} - {item.itemTitle}</p>
-                            <div className="flex gap-4 text-sm text-slate-600 mt-1">
-                              <span>Color: <span className="font-medium text-slate-950">{item.color || 'N/A'}</span></span>
-                              <span>Qty: <span className="font-medium text-slate-950">{item.quantity}</span></span>
-                            </div>
-                          </div>
-                          <div className="text-right font-semibold text-brand">
-                            ${item.totalPrice.toFixed(2)}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Update Status Controls */}
-                  <div className="rounded-2xl border border-brand/20 bg-brand/5 p-5 space-y-4">
-                    <h4 className="font-semibold text-brand">Update Order Status</h4>
-                    
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                      <label className="grid gap-2 text-sm text-slate-600">
-                        New Status
-                        <select
-                          value={newStatus}
-                          onChange={(e) => setNewStatus(e.target.value)}
-                          className="rounded-3xl border border-slate-200 bg-white px-3 py-2 outline-none focus:border-brand"
-                        >
-                          <option value="">Select Status...</option>
-                          {order.status === 'PENDING' && <option value="PACKED">PACKED</option>}
-                          {(order.status === 'PENDING' || order.status === 'PACKED') && <option value="SEND">SEND</option>}
-                        </select>
-                      </label>
-
-                      {order.status === 'PENDING' && newStatus && (
-                        <>
-                          <label className="grid gap-2 text-sm text-slate-600">
-                            Courier Name
-                            <select
-                              value={courierNameType}
-                              onChange={(e) => setCourierNameType(e.target.value)}
-                              className="rounded-3xl border border-slate-200 bg-white px-3 py-2 outline-none focus:border-brand"
-                            >
-                              <option value="Prompt">Prompt</option>
-                              <option value="Fardar">Fardar</option>
-                              <option value="Other">Other (Write Custom)</option>
-                            </select>
-                          </label>
-
-                          {courierNameType === 'Other' && (
-                            <label className="grid gap-2 text-sm text-slate-600">
-                              Custom Courier
-                              <input
-                                type="text"
-                                value={customCourierName}
-                                onChange={(e) => setCustomCourierName(e.target.value)}
-                                placeholder="Enter courier name"
-                                className="rounded-3xl border border-slate-200 bg-white px-3 py-2 outline-none focus:border-brand"
-                              />
-                            </label>
-                          )}
-
-                          <label className="grid gap-2 text-sm text-slate-600">
-                            Courier Number
-                            <input
-                              type="text"
-                              value={courierNumber}
-                              onChange={(e) => setCourierNumber(e.target.value)}
-                              placeholder="Tracking No."
-                              className="rounded-3xl border border-slate-200 bg-white px-3 py-2 outline-none focus:border-brand"
-                            />
-                          </label>
-                        </>
-                      )}
-                    </div>
-
-                    {newStatus && (
-                      <button
-                        onClick={() => handleUpdateStatus(order.orderId)}
-                        disabled={statusUpdating}
-                        className="rounded-full bg-slate-950 px-6 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50"
-                      >
-                        {statusUpdating ? 'Updating...' : `Confirm update to ${newStatus}`}
-                      </button>
-                    )}
-                  </div>
-
-                </div>
-              )}
             </div>
           ))
         )}
       </div>
+
+      {/* Modal Overlay */}
+      {expandedOrderId && (() => {
+        const order = orders.find(o => o.orderId === expandedOrderId);
+        if (!order) return null;
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" onClick={() => toggleExpand(null)}>
+            <div 
+              className="bg-white rounded-[2rem] w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="sticky top-0 bg-white/95 backdrop-blur border-b border-slate-200 p-6 flex items-center justify-between z-10">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-brand">Order Details</p>
+                  <h3 className="text-2xl font-bold text-slate-950">{order.orderId}</h3>
+                </div>
+                <button 
+                  onClick={() => toggleExpand(null)}
+                  className="p-3 bg-slate-100 rounded-full text-slate-500 hover:bg-slate-200 transition"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="p-6 space-y-8">
+                {/* Order Meta Info */}
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <p className="text-xs text-slate-500">Packing Type</p>
+                    <p className="font-semibold text-slate-950">{order.packingType}</p>
+                  </div>
+                  {order.boxPrice != null && (
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <p className="text-xs text-slate-500">Box Price</p>
+                      <p className="font-semibold text-slate-950">${order.boxPrice.toFixed(2)}</p>
+                    </div>
+                  )}
+                  {order.message && (
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:col-span-2">
+                      <p className="text-xs text-slate-500">Message</p>
+                      <p className="font-semibold text-slate-950">{order.message}</p>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Courier Info for Packed and Sent Orders */}
+                {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
+                  <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-brand/20 bg-brand/5 p-5">
+                    <div>
+                      <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider mb-1">Courier Name</p>
+                      <p className={`text-xl ${getCourierColor(order.courierName)}`}>{order.courierName}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider mb-1">Tracking Number</p>
+                      <p className="text-xl font-semibold text-slate-950">{order.courierNumber}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Items List */}
+                <div>
+                  <h4 className="text-lg font-semibold text-slate-950 mb-4">Order Items</h4>
+                  <div className="grid gap-3">
+                    {order.orderItems?.map(item => (
+                      <div key={item.id} className="flex items-center gap-5 rounded-2xl border border-slate-100 p-4 shadow-sm shadow-slate-100/50">
+                        <div className="h-20 w-20 overflow-hidden rounded-xl bg-slate-100 flex-shrink-0">
+                          {item.itemImage ? (
+                            <img src={item.itemImage} alt={item.itemTitle} className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-xs text-slate-400">No Img</div>
+                          )}
+                        </div>
+                        <div className="flex-grow">
+                          <p className="font-semibold text-slate-950 text-lg">{item.itemCode} - {item.itemTitle}</p>
+                          <div className="flex gap-6 text-sm text-slate-600 mt-2 bg-slate-50 inline-flex px-3 py-1.5 rounded-lg">
+                            <span>Color: <span className="font-bold text-slate-950">{item.color || 'N/A'}</span></span>
+                            <span>Qty: <span className="font-bold text-slate-950">{item.quantity}</span></span>
+                          </div>
+                        </div>
+                        <div className="text-right text-xl font-bold text-brand">
+                          ${item.totalPrice.toFixed(2)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Update Status Controls */}
+                <div className="rounded-[1.5rem] border border-brand/20 bg-brand/5 p-6 space-y-5">
+                  <h4 className="text-lg font-semibold text-brand">Update Order Status</h4>
+                  
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    <label className="grid gap-2 text-sm font-medium text-slate-700">
+                      New Status
+                      <select
+                        value={newStatus}
+                        onChange={(e) => setNewStatus(e.target.value)}
+                        className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
+                      >
+                        <option value="">Select Status...</option>
+                        {order.status === 'PENDING' && <option value="PACKED">PACKED</option>}
+                        {(order.status === 'PENDING' || order.status === 'PACKED') && <option value="SEND">SEND</option>}
+                      </select>
+                    </label>
+
+                    {order.status === 'PENDING' && newStatus && (
+                      <>
+                        <label className="grid gap-2 text-sm font-medium text-slate-700">
+                          Courier Name
+                          <select
+                            value={courierNameType}
+                            onChange={(e) => setCourierNameType(e.target.value)}
+                            className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
+                          >
+                            <option value="Prompt">Prompt</option>
+                            <option value="Fardar">Fardar</option>
+                            <option value="Other">Other (Write Custom)</option>
+                          </select>
+                        </label>
+
+                        {courierNameType === 'Other' && (
+                          <label className="grid gap-2 text-sm font-medium text-slate-700">
+                            Custom Courier
+                            <input
+                              type="text"
+                              value={customCourierName}
+                              onChange={(e) => setCustomCourierName(e.target.value)}
+                              placeholder="Enter courier name"
+                              className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
+                            />
+                          </label>
+                        )}
+
+                        <label className="grid gap-2 text-sm font-medium text-slate-700">
+                          Courier Number
+                          <input
+                            type="text"
+                            value={courierNumber}
+                            onChange={(e) => setCourierNumber(e.target.value)}
+                            placeholder="Tracking No."
+                            className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
+                          />
+                        </label>
+                      </>
+                    )}
+                  </div>
+
+                  {newStatus && (
+                    <button
+                      onClick={() => handleUpdateStatus(order.orderId)}
+                      disabled={statusUpdating}
+                      className="w-full sm:w-auto mt-4 rounded-xl bg-slate-950 px-8 py-3 text-sm font-bold tracking-wide text-white transition hover:bg-slate-800 disabled:opacity-50 shadow-md shadow-slate-900/20"
+                    >
+                      {statusUpdating ? 'Updating...' : `Confirm update to ${newStatus}`}
+                    </button>
+                  )}
+                </div>
+
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
