@@ -12,6 +12,8 @@ import RequireSales from './components/RequireSales';
 import SalesOrdersPage from './pages/SalesOrdersPage';
 import AddOrderPage from './pages/AddOrderPage';
 import SalesItemsPage from './pages/SalesItemsPage';
+import RequirePackage from './components/RequirePackage';
+import PackageOrdersPage from './pages/PackageOrdersPage';
 import './index.css';
 
 const router = createBrowserRouter(
@@ -29,6 +31,7 @@ const router = createBrowserRouter(
         { path: 'sales/items', element: <RequireSales><SalesItemsPage /></RequireSales> },
         { path: 'sales/orders/add', element: <RequireSales><AddOrderPage /></RequireSales> },
         { path: 'sales/orders/edit/:id', element: <RequireSales><AddOrderPage /></RequireSales> },
+        { path: 'package', element: <RequirePackage><PackageOrdersPage /></RequirePackage> },
       ],
     },
   ],

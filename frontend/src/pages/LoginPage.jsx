@@ -22,6 +22,8 @@ function LoginPage() {
         navigate('/admin');
       } else if (data.role === 'SALES_MANAGEMENT') {
         navigate('/sales');
+      } else if (data.role === 'PACKAGE') {
+        navigate('/package');
       } else {
         navigate('/');
       }

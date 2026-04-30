@@ -34,7 +34,7 @@ function App() {
               >
                 Logout
               </button>
-            ) : currentUser?.role === 'SALES_MANAGEMENT' ? (
+            ) : currentUser?.role === 'SALES_MANAGEMENT' || currentUser?.role === 'PACKAGE' ? (
               <button
                 type="button"
                 onClick={handleAdminLogout}
@@ -67,6 +67,12 @@ function App() {
                 </Link>
                 <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/sales">
                   Orders
+                </Link>
+              </>
+            ) : currentUser?.role === 'PACKAGE' ? (
+              <>
+                <Link className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 transition hover:border-slate-300 hover:text-slate-950" to="/package">
+                  Package Orders
                 </Link>
               </>
             ) : (

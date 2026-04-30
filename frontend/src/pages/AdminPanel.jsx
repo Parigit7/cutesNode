@@ -4,6 +4,7 @@ import api from '../services/api';
 function AdminPanel() {
   const [currentUserName, setCurrentUserName] = useState('Admin');
   const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [role, setRole] = useState('SALES_MANAGEMENT');
   const [active, setActive] = useState(true);
   const [message, setMessage] = useState('');
@@ -41,11 +42,13 @@ function AdminPanel() {
     try {
       const { data } = await api.post('/users', {
         username,
+        password,
         role,
         active,
       });
       setMessage(`Created ${data.role} user: ${data.username}`);
       setUsername('');
+      setPassword('');
       setRole('SALES_MANAGEMENT');
       setActive(true);
       loadUsers();
@@ -77,6 +80,17 @@ function AdminPanel() {
               className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
               value={username}
               onChange={(event) => setUsername(event.target.value)}
+              required
+            />
+          </label>
+
+          <label className="grid gap-2 text-sm text-slate-600">
+            Password
+            <input
+              type="password"
+              className="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               required
             />
           </label>
