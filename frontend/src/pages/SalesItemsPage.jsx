@@ -104,17 +104,26 @@ function SalesItemsPage() {
                   <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-800">{item.code}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-2xl font-semibold text-slate-950">${item.price.toFixed(2)}</span>
+                  <span className="text-2xl font-semibold text-slate-950">Rs. {item.price.toFixed(2)}</span>
                 </div>
-                <div className="grid gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Available Colors</p>
-                  <div className="flex flex-wrap gap-2">
-                    {item.colors.map((c, i) => (
-                      <span key={i} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700">
-                        {c.name}: {c.qty}
+                <div className="space-y-2">
+                  {item.colors.map((color, index) => (
+                    <div key={`${item.code}-${index}`} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-sm">
+                      <div className="flex items-center gap-3">
+                        <span 
+                          className="h-4 w-4 rounded-full border border-slate-200 shadow-sm" 
+                          style={{ backgroundColor: color.name === 'Default' ? '#94a3b8' : color.name }} 
+                          title={color.name}
+                        />
+                        {!color.name.startsWith('#') && (
+                          <span className="font-semibold text-slate-900">{color.name}</span>
+                        )}
+                      </div>
+                      <span className="font-bold text-brand bg-brand/5 px-2.5 py-1 rounded-lg text-xs">
+                        {color.qty} <span className="text-[10px] opacity-70">QTY</span>
                       </span>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </article>

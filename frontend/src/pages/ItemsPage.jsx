@@ -815,14 +815,22 @@ function ItemsPage() {
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {item.colors.map((color, index) => (
-                    <div key={`${item.code}-${index}`} className="flex items-center justify-between rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+                    <div key={`${item.code}-${index}`} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-sm">
                       <div className="flex items-center gap-3">
-                        <span className="inline-flex h-3 w-3 rounded-full" style={{ backgroundColor: color.name === 'Default' ? '#94a3b8' : color.name }} />
-                        <span className="font-semibold text-slate-900">{color.name}</span>
+                        <span 
+                          className="h-4 w-4 rounded-full border border-slate-200 shadow-sm" 
+                          style={{ backgroundColor: color.name === 'Default' ? '#94a3b8' : color.name }} 
+                          title={color.name}
+                        />
+                        {!color.name.startsWith('#') && (
+                          <span className="font-semibold text-slate-900">{color.name}</span>
+                        )}
                       </div>
-                      <span className="text-slate-600">{color.qty} pcs</span>
+                      <span className="font-bold text-brand bg-brand/5 px-2.5 py-1 rounded-lg text-xs">
+                        {color.qty} <span className="text-[10px] opacity-70">QTY</span>
+                      </span>
                     </div>
                   ))}
                 </div>

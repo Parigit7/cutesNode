@@ -249,7 +249,7 @@ function AddOrderPage() {
                           className={`h-8 w-8 rounded-full border-2 transition-all ${
                             selectedColor === c.name ? 'border-slate-900 scale-125 shadow-md' : 'border-slate-200 hover:scale-110'
                           }`}
-                          style={{ backgroundColor: c.name }}
+                          style={{ backgroundColor: c.name === 'Default' ? '#94a3b8' : c.name }}
                           title={c.name}
                         />
                       ))}
@@ -421,9 +421,12 @@ function AddOrderPage() {
                       <p className="font-semibold">{item.itemCode}</p>
                       <p className="text-slate-500 flex items-center gap-1.5 mt-0.5">
                         {item.color && item.color !== 'N/A' && (
-                          <span className="w-3 h-3 rounded-full border border-slate-300 inline-block shadow-sm" style={{ backgroundColor: item.color }}></span>
+                          <span className="w-3 h-3 rounded-full border border-slate-300 inline-block shadow-sm" style={{ backgroundColor: item.color === 'Default' ? '#94a3b8' : item.color }}></span>
                         )}
-                        <span>{item.color} x {item.quantity}</span>
+                        {!item.color?.startsWith('#') && (
+                          <span>{item.color}</span>
+                        )}
+                        <span className="font-semibold text-slate-900">x {item.quantity}</span>
                       </p>
                     </div>
                     <div className="flex items-center gap-4">

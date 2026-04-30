@@ -299,9 +299,11 @@ function PackageOrdersPage() {
                             <span className="flex items-center gap-1.5">
                               Color:
                               {item.color && item.color !== 'N/A' && (
-                                <span className="w-3 h-3 rounded-full border border-slate-300 inline-block shadow-sm" style={{ backgroundColor: item.color }}></span>
+                                <span className="w-3 h-3 rounded-full border border-slate-300 inline-block shadow-sm" style={{ backgroundColor: item.color === 'Default' ? '#94a3b8' : item.color }}></span>
                               )}
-                              <span className="font-bold text-slate-950">{item.color || 'N/A'}</span>
+                              {!item.color?.startsWith('#') && (
+                                <span className="font-bold text-slate-950">{item.color || 'N/A'}</span>
+                              )}
                             </span>
                             <span>Qty: <span className="font-bold text-slate-950">{item.quantity}</span></span>
                           </div>
