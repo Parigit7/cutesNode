@@ -21,7 +21,7 @@ function PackageOrdersPage() {
   const stored = localStorage.getItem('cutes-user');
   const user = stored ? JSON.parse(stored) : null;
   const isAdmin = user?.role === 'ADMIN';
-  //comment
+
   useEffect(() => {
     loadOrders();
   }, []);
@@ -204,10 +204,6 @@ function PackageOrdersPage() {
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Required Date</p>
                     <p className="text-slate-950">{order.requiredDate}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Items</p>
-                    <p className="text-slate-950">{order.orderItems?.length || 0}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
