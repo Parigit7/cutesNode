@@ -137,15 +137,13 @@ function SalesOrdersPage() {
               <th className="px-6 py-4">Order ID</th>
               <th className="px-6 py-4">Required Date</th>
               <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Packing Type</th>
-              <th className="px-6 py-4">Box Price</th>
-              <th className="px-6 py-4">Total Items</th>
+              <th className="px-6 py-4">Total Price</th>
               <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 bg-white">
             {loading ? (
-              <tr><td colSpan="7" className="px-6 py-4 text-center">Loading...</td></tr>
+              <tr><td colSpan="5" className="px-6 py-4 text-center">Loading...</td></tr>
             ) : (() => {
               const filteredOrders = orders.filter(o => {
                 const matchesSearch = o.orderId.toLowerCase().includes(searchQuery.toLowerCase());
@@ -155,7 +153,7 @@ function SalesOrdersPage() {
               });
 
               if (filteredOrders.length === 0) {
-                return <tr><td colSpan="7" className="px-6 py-4 text-center">No orders found.</td></tr>;
+                return <tr><td colSpan="5" className="px-6 py-4 text-center">No orders found.</td></tr>;
               }
 
               return filteredOrders.map((order) => (
@@ -174,9 +172,12 @@ function SalesOrdersPage() {
                       {order.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">{order.packingType}</td>
-                  <td className="px-6 py-4">{order.boxPrice ? `Rs. ${order.boxPrice.toFixed(2)}` : 'N/A'}</td>
-                  <td className="px-6 py-4">{order.orderItems?.length || 0}</td>
+                  <td className="px-6 py-4 font-bold text-slate-950">
+                    Rs. {(
+                      (order.orderItems?.reduce((sum, item) => sum + item.totalPrice, 0) || 0) + 
+                      (order.boxPrice || 0)
+                    ).toFixed(2)}
+                  </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                       <button
