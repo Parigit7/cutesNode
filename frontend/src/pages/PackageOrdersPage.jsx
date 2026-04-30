@@ -37,16 +37,22 @@ function PackageOrdersPage() {
   const handleUpdateStatus = async (orderId) => {
     if (!newStatus) return;
     
-    let finalCourierName = courierNameType === 'Other' ? customCourierName : courierNameType;
+    const order = orders.find(o => o.orderId === orderId);
+    let finalCourierName = '';
+    let finalCourierNumber = '';
     
-    if (!finalCourierName.trim()) {
-      alert("Please provide a valid courier name.");
-      return;
-    }
-    
-    if (!courierNumber.trim()) {
-      alert("Please provide the courier number.");
-      return;
+    // If order is currently PENDING, we must enter courier details regardless of new status
+    if (order?.status === 'PENDING') {
+      finalCourierName = courierNameType === 'Other' ? customCourierName : courierNameType;
+      if (!finalCourierName.trim()) {
+        alert("Please provide a valid courier name.");
+        return;
+      }
+      if (!courierNumber.trim()) {
+        alert("Please provide the courier number.");
+        return;
+      }
+      finalCourierNumber = courierNumber;
     }
 
     setStatusUpdating(true);
@@ -60,7 +66,12 @@ function PackageOrdersPage() {
       // Update local state
       setOrders(orders.map(o => {
         if (o.orderId === orderId) {
-          return { ...o, status: newStatus, courierName: finalCourierName, courierNumber: courierNumber };
+          return { 
+            ...o, 
+            status: newStatus, 
+            courierName: o.status === 'PENDING' ? finalCourierName : o.courierName, 
+            courierNumber: o.status === 'PENDING' ? finalCourierNumber : o.courierNumber 
+          };
         }
         return o;
       }));
@@ -90,6 +101,12 @@ function PackageOrdersPage() {
   };
 
   const filteredOrders = orders.filter(o => o.status === activeTab);
+
+  const getCourierColor = (name) => {
+    if (name === 'Prompt') return 'text-blue-600 font-bold';
+    if (name === 'Fardar') return 'text-red-600 font-bold';
+    return 'text-slate-950 font-bold';
+  };
 
   return (
     <div className="w-full space-y-6 rounded-[1.5rem] bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] lg:p-8">
@@ -146,9 +163,10 @@ function PackageOrdersPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
-                  {order.courierName && (
-                    <span className="text-xs text-slate-500 bg-white border border-slate-200 px-3 py-1 rounded-full">
-                      {order.courierName} : {order.courierNumber}
+                  {order.courierName && (order.status === 'PACKED' || order.status === 'SEND') && (
+                    <span className="text-xs bg-white border border-slate-200 px-3 py-1 rounded-full flex items-center gap-1">
+                      <span className={getCourierColor(order.courierName)}>{order.courierName}</span>
+                      <span className="text-slate-500">: {order.courierNumber}</span>
                     </span>
                   )}
                   <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
@@ -186,6 +204,20 @@ function PackageOrdersPage() {
                       </div>
                     )}
                   </div>
+                  
+                  {/* Courier Info for Packed and Sent Orders */}
+                  {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
+                    <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-brand/20 bg-brand/5 p-4">
+                      <div>
+                        <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider">Courier Name</p>
+                        <p className={`text-lg ${getCourierColor(order.courierName)}`}>{order.courierName}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-brand/80 font-semibold uppercase tracking-wider">Tracking Number</p>
+                        <p className="text-lg font-semibold text-slate-950">{order.courierNumber}</p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Items List */}
                   <div>
@@ -233,7 +265,7 @@ function PackageOrdersPage() {
                         </select>
                       </label>
 
-                      {newStatus && (
+                      {order.status === 'PENDING' && newStatus && (
                         <>
                           <label className="grid gap-2 text-sm text-slate-600">
                             Courier Name
