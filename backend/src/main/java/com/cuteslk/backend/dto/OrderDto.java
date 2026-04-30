@@ -7,7 +7,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class OrderDto {
+    @NotBlank(message = "Order ID is required")
     private String orderId;
+    
     private String packingType;
     private BigDecimal boxPrice;
     private LocalDate requiredDate;
@@ -18,15 +20,12 @@ public class OrderDto {
     private String createdBy;
     private String packedBy;
 
-    @NotBlank(message = "Customer name is required")
     @JsonProperty("customerName")
     private String customerName;
 
-    @NotBlank(message = "Customer address is required")
     @JsonProperty("customerAddress")
     private String customerAddress;
 
-    @NotBlank(message = "Primary phone number is required")
     @JsonProperty("customerPhone1")
     private String customerPhone1;
 

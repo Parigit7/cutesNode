@@ -84,12 +84,6 @@ public class OrderController {
             // Only admins can change status from pending to packed/send, check later or handle carefully
         }
 
-        // Sales management can only edit pending orders
-        // Note: Spring security context can be used to check role if we want to restrict editing to ONLY pending for SALES_MANAGEMENT.
-        // Assuming the requirement: "if any order in pending status sales management can edit or delete order."
-        // We will enforce this via logic:
-        // (The frontend also hides edit button if not pending).
-
         existing.setPackingType(dto.getPackingType());
         existing.setBoxPrice(dto.getBoxPrice());
         existing.setRequiredDate(dto.getRequiredDate());
@@ -147,7 +141,6 @@ public class OrderController {
         Order existing = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Order not found"));
                 
-        // Should ideally check status here if user is not admin
         orderRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

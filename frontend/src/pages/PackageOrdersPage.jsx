@@ -65,8 +65,8 @@ function PackageOrdersPage() {
     try {
       await api.put(`/orders/${orderId}/status`, {
         status: newStatus,
-        courierName: finalCourierName,
-        courierNumber: courierNumber
+        courierName: finalCourierName || order.courierName,
+        courierNumber: courierNumber || order.courierNumber
       });
 
       // Update local state
@@ -402,77 +402,75 @@ function PackageOrdersPage() {
                 )}
 
                 {/* Update Status Controls */}
-                {!isAdmin && (
-                  <div className="rounded-[1.5rem] border border-brand/20 bg-brand/5 p-6 space-y-5">
-                    <h4 className="text-lg font-semibold text-brand">Update Order Status</h4>
+                <div className="rounded-[1.5rem] border border-brand/20 bg-brand/5 p-6 space-y-5">
+                  <h4 className="text-lg font-semibold text-brand">Update Order Status</h4>
 
-                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                      <label className="grid gap-2 text-sm font-medium text-slate-700">
-                        New Status
-                        <select
-                          value={newStatus}
-                          onChange={(e) => setNewStatus(e.target.value)}
-                          className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
-                        >
-                          <option value="">Select Status...</option>
-                          {order.status === 'PENDING' && <option value="PACKED">PACKED</option>}
-                          {(order.status === 'PENDING' || order.status === 'PACKED') && <option value="SEND">SEND</option>}
-                        </select>
-                      </label>
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    <label className="grid gap-2 text-sm font-medium text-slate-700">
+                      New Status
+                      <select
+                        value={newStatus}
+                        onChange={(e) => setNewStatus(e.target.value)}
+                        className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
+                      >
+                        <option value="">Select Status...</option>
+                        {order.status === 'PENDING' && <option value="PACKED">PACKED</option>}
+                        {(order.status === 'PENDING' || order.status === 'PACKED') && <option value="SEND">SEND</option>}
+                      </select>
+                    </label>
 
-                      {order.status === 'PENDING' && newStatus && (
-                        <>
+                    {order.status === 'PENDING' && newStatus && (
+                      <>
+                        <label className="grid gap-2 text-sm font-medium text-slate-700">
+                          Courier Name
+                          <select
+                            value={courierNameType}
+                            onChange={(e) => setCourierNameType(e.target.value)}
+                            className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
+                          >
+                            <option value="Prompt">Prompt</option>
+                            <option value="Fardar">Fardar</option>
+                            <option value="Other">Other (Write Custom)</option>
+                          </select>
+                        </label>
+
+                        {courierNameType === 'Other' && (
                           <label className="grid gap-2 text-sm font-medium text-slate-700">
-                            Courier Name
-                            <select
-                              value={courierNameType}
-                              onChange={(e) => setCourierNameType(e.target.value)}
-                              className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
-                            >
-                              <option value="Prompt">Prompt</option>
-                              <option value="Fardar">Fardar</option>
-                              <option value="Other">Other (Write Custom)</option>
-                            </select>
-                          </label>
-
-                          {courierNameType === 'Other' && (
-                            <label className="grid gap-2 text-sm font-medium text-slate-700">
-                              Custom Courier
-                              <input
-                                type="text"
-                                value={customCourierName}
-                                onChange={(e) => setCustomCourierName(e.target.value)}
-                                placeholder="Enter courier name"
-                                className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
-                              />
-                            </label>
-                          )}
-
-                          <label className="grid gap-2 text-sm font-medium text-slate-700">
-                            Courier Number
+                            Custom Courier
                             <input
                               type="text"
-                              value={courierNumber}
-                              onChange={(e) => setCourierNumber(e.target.value)}
-                              placeholder="Tracking No."
+                              value={customCourierName}
+                              onChange={(e) => setCustomCourierName(e.target.value)}
+                              placeholder="Enter courier name"
                               className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
                             />
                           </label>
-                        </>
-                      )}
-                    </div>
+                        )}
 
-                    {newStatus && (
-                      <button
-                        onClick={() => handleUpdateStatus(order.orderId)}
-                        disabled={statusUpdating}
-                        className="w-full sm:w-auto mt-4 rounded-xl bg-slate-950 px-8 py-3 text-sm font-bold tracking-wide text-white transition hover:bg-slate-800 disabled:opacity-50 shadow-md shadow-slate-900/20"
-                      >
-                        {statusUpdating ? 'Updating...' : `Confirm update to ${newStatus}`}
-                      </button>
+                        <label className="grid gap-2 text-sm font-medium text-slate-700">
+                          Courier Number
+                          <input
+                            type="text"
+                            value={courierNumber}
+                            onChange={(e) => setCourierNumber(e.target.value)}
+                            placeholder="Tracking No."
+                            className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-brand shadow-sm"
+                          />
+                        </label>
+                      </>
                     )}
                   </div>
-                )}
+
+                  {newStatus && (
+                    <button
+                      onClick={() => handleUpdateStatus(order.orderId)}
+                      disabled={statusUpdating}
+                      className="w-full sm:w-auto mt-4 rounded-xl bg-slate-950 px-8 py-3 text-sm font-bold tracking-wide text-white transition hover:bg-slate-800 disabled:opacity-50 shadow-md shadow-slate-900/20"
+                    >
+                      {statusUpdating ? 'Updating...' : `Confirm update to ${newStatus}`}
+                    </button>
+                  )}
+                </div>
 
               </div>
             </div>
