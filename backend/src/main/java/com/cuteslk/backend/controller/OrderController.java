@@ -55,6 +55,10 @@ public class OrderController {
         order.setRequiredDate(dto.getRequiredDate());
         order.setMessage(dto.getMessage());
         order.setCreatedBy(principal.getName());
+        order.setCustomerName(dto.getCustomerName());
+        order.setCustomerAddress(dto.getCustomerAddress());
+        order.setCustomerPhone1(dto.getCustomerPhone1());
+        order.setCustomerPhone2(dto.getCustomerPhone2());
         // Status defaults to PENDING in constructor
 
         List<OrderItem> items = dto.getOrderItems().stream().map(itemDto -> {
@@ -90,6 +94,10 @@ public class OrderController {
         existing.setBoxPrice(dto.getBoxPrice());
         existing.setRequiredDate(dto.getRequiredDate());
         existing.setMessage(dto.getMessage());
+        existing.setCustomerName(dto.getCustomerName());
+        existing.setCustomerAddress(dto.getCustomerAddress());
+        existing.setCustomerPhone1(dto.getCustomerPhone1());
+        existing.setCustomerPhone2(dto.getCustomerPhone2());
         
         // Update items
         existing.getOrderItems().clear();
@@ -156,6 +164,10 @@ public class OrderController {
         dto.setCourierNumber(order.getCourierNumber());
         dto.setCreatedBy(order.getCreatedBy());
         dto.setPackedBy(order.getPackedBy());
+        dto.setCustomerName(order.getCustomerName());
+        dto.setCustomerAddress(order.getCustomerAddress());
+        dto.setCustomerPhone1(order.getCustomerPhone1());
+        dto.setCustomerPhone2(order.getCustomerPhone2());
         dto.setOrderItems(order.getOrderItems().stream().map(this::toItemDto).collect(Collectors.toList()));
         return dto;
     }

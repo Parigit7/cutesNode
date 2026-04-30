@@ -15,6 +15,10 @@ public class OrderDto {
     private String courierNumber;
     private String createdBy;
     private String packedBy;
+    private String customerName;
+    private String customerAddress;
+    private String customerPhone1;
+    private String customerPhone2;
     private List<OrderItemDto> orderItems;
 
     public OrderDto() {}
@@ -41,4 +45,12 @@ public class OrderDto {
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
     public String getPackedBy() { return packedBy; }
     public void setPackedBy(String packedBy) { this.packedBy = packedBy; }
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public String getCustomerAddress() { return customerAddress; }
+    public void setCustomerAddress(String customerAddress) { this.customerAddress = customerAddress; }
+    public String getCustomerPhone1() { return customerPhone1; }
+    public void setCustomerPhone1(String customerPhone1) { this.customerPhone1 = customerPhone1; }
+    public String getCustomerPhone2() { return customerPhone2; }
+    public void setCustomerPhone2(String customerPhone2) { this.customerPhone2 = customerPhone2; }
 }

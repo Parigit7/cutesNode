@@ -351,6 +351,38 @@ function PackageOrdersPage() {
                   </div>
                 )}
 
+                {/* 4.5 Customer Details */}
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-6 space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                    <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500">Customer Information</h4>
+                  </div>
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Customer Name</p>
+                        <p className="text-lg font-bold text-slate-950">{order.customerName}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Contact Numbers</p>
+                        <div className="flex flex-wrap gap-3">
+                          <span className="inline-flex items-center rounded-full bg-brand/10 px-3 py-1 text-sm font-semibold text-brand">
+                            {order.customerPhone1}
+                          </span>
+                          {order.customerPhone2 && (
+                            <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">
+                              {order.customerPhone2}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Delivery Address</p>
+                      <p className="text-slate-700 whitespace-pre-wrap leading-relaxed">{order.customerAddress}</p>
+                    </div>
+                  </div>
+                </div>
+
                 {/* 5. Courier Details */}
                 {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
                   <div className="grid gap-4 sm:grid-cols-2 rounded-2xl border border-brand/20 bg-brand/5 p-5">

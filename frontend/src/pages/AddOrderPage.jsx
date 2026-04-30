@@ -12,6 +12,10 @@ function AddOrderPage() {
   const [boxPrice, setBoxPrice] = useState('');
   const [requiredDate, setRequiredDate] = useState('');
   const [message, setMessage] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerAddress, setCustomerAddress] = useState('');
+  const [customerPhone1, setCustomerPhone1] = useState('');
+  const [customerPhone2, setCustomerPhone2] = useState('');
   const [orderItems, setOrderItems] = useState([]);
 
   const [items, setItems] = useState([]);
@@ -52,6 +56,10 @@ function AddOrderPage() {
         setBoxPrice(order.boxPrice || '');
         setRequiredDate(order.requiredDate);
         setMessage(order.message || '');
+        setCustomerName(order.customerName || '');
+        setCustomerAddress(order.customerAddress || '');
+        setCustomerPhone1(order.customerPhone1 || '');
+        setCustomerPhone2(order.customerPhone2 || '');
         setOrderItems(order.orderItems || []);
       } else {
         setError('Order not found.');
@@ -109,6 +117,9 @@ function AddOrderPage() {
 
     if (!orderId) return setError('Order ID is required.');
     if (!requiredDate) return setError('Required Date is required.');
+    if (!customerName) return setError('Customer Name is required.');
+    if (!customerAddress) return setError('Customer Address is required.');
+    if (!customerPhone1) return setError('Primary Phone Number is required.');
     if (orderItems.length === 0) return setError('Please add at least one item.');
 
     const payload = {
@@ -118,6 +129,10 @@ function AddOrderPage() {
       requiredDate,
       message,
       status: 'PENDING',
+      customerName,
+      customerAddress,
+      customerPhone1,
+      customerPhone2,
       orderItems
     };
 
@@ -135,6 +150,10 @@ function AddOrderPage() {
         setBoxPrice('');
         setRequiredDate('');
         setMessage('');
+        setCustomerName('');
+        setCustomerAddress('');
+        setCustomerPhone1('');
+        setCustomerPhone2('');
         setOrderItems([]);
       }
     } catch (err) {
@@ -282,6 +301,57 @@ function AddOrderPage() {
               placeholder="e.g. ORD-001"
             />
           </label>
+
+          <div className="grid gap-6 rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500">Customer Details</h4>
+            
+            <label className="grid gap-2 text-sm text-slate-600">
+              Customer Name *
+              <input
+                required
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                placeholder="Full name"
+              />
+            </label>
+
+            <label className="grid gap-2 text-sm text-slate-600">
+              Delivery Address *
+              <textarea
+                required
+                value={customerAddress}
+                onChange={(e) => setCustomerAddress(e.target.value)}
+                className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                rows="3"
+                placeholder="Complete address for delivery"
+              />
+            </label>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-2 text-sm text-slate-600">
+                Phone Number 1 *
+                <input
+                  required
+                  type="tel"
+                  value={customerPhone1}
+                  onChange={(e) => setCustomerPhone1(e.target.value)}
+                  className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                  placeholder="07X XXXXXXX"
+                />
+              </label>
+              <label className="grid gap-2 text-sm text-slate-600">
+                Phone Number 2
+                <input
+                  type="tel"
+                  value={customerPhone2}
+                  onChange={(e) => setCustomerPhone2(e.target.value)}
+                  className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                  placeholder="Optional"
+                />
+              </label>
+            </div>
+          </div>
 
           <label className="grid gap-2 text-sm text-slate-600">
             Required Date
