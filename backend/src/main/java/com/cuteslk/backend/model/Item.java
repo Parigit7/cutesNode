@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,7 +38,8 @@ public class Item {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false, length = 1000)
+    @Lob
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String image;
 
     @ElementCollection(fetch = FetchType.EAGER)
