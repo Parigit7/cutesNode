@@ -20,8 +20,8 @@ function App() {
               <img src="/logo.png" alt="Cutes.lk Logo" className="h-full w-full object-cover" />
             </div>
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-slate-950">Cutes.lk</h1>
-              <p className="text-slate-500 text-sm">Business management made simple</p>
+              <h1 className="text-2xl font-semibold tracking-tight text-[#a53973]">Cutes.lk</h1>
+              <p className="text-[#a53973]/60 text-sm">Business management</p>
             </div>
           </div>
 
