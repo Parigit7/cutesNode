@@ -50,13 +50,13 @@ function App() {
       <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
         <div className="flex w-full items-center justify-between gap-4 px-5 py-2 lg:px-8">
           <Link to="/" className="flex items-center gap-3 md:gap-5 hover:opacity-90 transition min-w-0 py-1">
-            <div className="h-16 w-16 md:h-28 md:w-28 flex-shrink-0 overflow-hidden rounded-2xl border-2 border-brand/10 shadow-lg bg-white p-1">
+            <div className="h-16 w-16 md:h-28 md:w-28    p-1">
               <img src="/logo.png" alt="Cutes.lk Logo" className="h-full w-full object-contain" />
             </div>
-            <div className="flex flex-col truncate">
+            {/* <div className="flex flex-col truncate">
               <h1 className="text-xl md:text-3xl font-black tracking-tight text-[#a53973] leading-none truncate">Cutes.lk</h1>
               <p className="text-[#a53973]/60 text-[10px] md:text-sm font-bold uppercase tracking-[0.2em] mt-1.5 truncate">Management Portal</p>
-            </div>
+            </div> */}
           </Link>
 
           {/* Desktop Nav */}
@@ -68,8 +68,8 @@ function App() {
                   key={link.path}
                   to={link.path}
                   className={`rounded-full px-5 py-2 text-sm font-semibold transition ${isActive
-                      ? 'bg-[#a53973] text-white shadow-md shadow-[#a53973]/20'
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    ? 'bg-[#a53973] text-white shadow-md shadow-[#a53973]/20'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                 >
                   {link.name}
@@ -117,8 +117,8 @@ function App() {
                   key={link.path}
                   to={link.path}
                   className={`flex items-center justify-between rounded-xl px-5 py-4 text-sm font-bold transition ${location.pathname === link.path
-                      ? 'bg-[#a53973]/10 text-[#a53973]'
-                      : 'text-slate-600 hover:bg-slate-50'
+                    ? 'bg-[#a53973]/10 text-[#a53973]'
+                    : 'text-slate-600 hover:bg-slate-50'
                     }`}
                 >
                   {link.name}
