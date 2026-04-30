@@ -1,5 +1,7 @@
 package com.cuteslk.backend.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -15,9 +17,20 @@ public class OrderDto {
     private String courierNumber;
     private String createdBy;
     private String packedBy;
+
+    @NotBlank(message = "Customer name is required")
+    @JsonProperty("customerName")
     private String customerName;
+
+    @NotBlank(message = "Customer address is required")
+    @JsonProperty("customerAddress")
     private String customerAddress;
+
+    @NotBlank(message = "Primary phone number is required")
+    @JsonProperty("customerPhone1")
     private String customerPhone1;
+
+    @JsonProperty("customerPhone2")
     private String customerPhone2;
     private List<OrderItemDto> orderItems;
 

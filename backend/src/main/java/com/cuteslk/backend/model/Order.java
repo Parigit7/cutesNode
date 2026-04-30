@@ -33,22 +33,20 @@ public class Order {
     private String status;
 
     private String courierName;
-
     private String courierNumber;
-    
     private String createdBy;
-    
     private String packedBy;
 
-    @Column(nullable = false)
+    @Column(name = "customer_name", nullable = false)
     private String customerName;
 
-    @Column(nullable = false)
+    @Column(name = "customer_address", nullable = false)
     private String customerAddress;
 
-    @Column(nullable = false)
+    @Column(name = "customer_phone1", nullable = false)
     private String customerPhone1;
 
+    @Column(name = "customer_phone2")
     private String customerPhone2;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

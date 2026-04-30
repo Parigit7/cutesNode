@@ -199,6 +199,7 @@ function PackageOrdersPage() {
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Order ID</p>
                     <p className="font-semibold text-slate-950">{order.orderId}</p>
+                    <p className="text-[10px] text-brand font-bold uppercase">{order.customerName || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Required Date</p>
@@ -351,37 +352,44 @@ function PackageOrdersPage() {
                   </div>
                 )}
 
-                {/* 4.5 Customer Details */}
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-6 space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                    <h4 className="text-sm font-bold uppercase tracking-wider text-slate-500">Customer Information</h4>
-                  </div>
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Customer Name</p>
-                        <p className="text-lg font-bold text-slate-950">{order.customerName}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Contact Numbers</p>
-                        <div className="flex flex-wrap gap-3">
-                          <span className="inline-flex items-center rounded-full bg-brand/10 px-3 py-1 text-sm font-semibold text-brand">
-                            {order.customerPhone1}
-                          </span>
-                          {order.customerPhone2 && (
-                            <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">
-                              {order.customerPhone2}
+                {/* 3.5 Customer Information (Moved up for better visibility) */}
+                {(order.customerName || order.customerAddress || order.customerPhone1) && (
+                  <div className="rounded-2xl border border-brand/20 bg-brand/5 p-6 space-y-4 shadow-sm">
+                    <div className="flex items-center gap-2 border-b border-brand/10 pb-3">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-brand" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
+                      <h4 className="text-sm font-bold uppercase tracking-wider text-brand">Customer Information</h4>
+                    </div>
+                    <div className="grid gap-6 sm:grid-cols-2">
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Customer Name</p>
+                          <p className="text-lg font-bold text-slate-950">{order.customerName || 'Not Provided'}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Contact Numbers</p>
+                          <div className="flex flex-wrap gap-3">
+                            <span className="inline-flex items-center rounded-full bg-white border border-brand/20 px-3 py-1 text-sm font-bold text-brand">
+                              {order.customerPhone1 || 'N/A'}
                             </span>
-                          )}
+                            {order.customerPhone2 && (
+                              <span className="inline-flex items-center rounded-full bg-white border border-slate-200 px-3 py-1 text-sm font-semibold text-slate-600">
+                                {order.customerPhone2}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Delivery Address</p>
-                      <p className="text-slate-700 whitespace-pre-wrap leading-relaxed">{order.customerAddress}</p>
+                      <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Delivery Address</p>
+                        <p className="text-slate-700 whitespace-pre-wrap leading-relaxed font-medium bg-white/50 p-3 rounded-xl border border-brand/5">
+                          {order.customerAddress || 'No address provided'}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* 5. Courier Details */}
                 {(order.status === 'PACKED' || order.status === 'SEND') && order.courierName && (
