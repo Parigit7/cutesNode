@@ -8,6 +8,8 @@ function PackageOrdersPage() {
   const [activeTab, setActiveTab] = useState('PENDING'); // PENDING, PACKED, SEND
 
   const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
 
   // Status Update State
   const [statusUpdating, setStatusUpdating] = useState(false);
@@ -100,7 +102,12 @@ function PackageOrdersPage() {
     }
   };
 
-  const filteredOrders = orders.filter(o => o.status === activeTab);
+  const filteredOrders = orders.filter(o => {
+    const matchesStatus = o.status === activeTab;
+    const matchesSearch = o.orderId.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDate = !dateFilter || o.requiredDate === dateFilter;
+    return matchesStatus && matchesSearch && matchesDate;
+  });
 
   const getCourierColor = (name) => {
     if (name === 'Prompt') return 'text-blue-600 font-bold';
@@ -117,22 +124,59 @@ function PackageOrdersPage() {
 
       {error && <div className="rounded-3xl bg-rose-500/10 p-4 text-sm text-rose-700">{error}</div>}
 
-      <div className="flex gap-4 border-b border-slate-200">
-        {['PENDING', 'PACKED', 'SEND'].map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`pb-3 font-semibold transition ${activeTab === tab
+      <div className="flex flex-col gap-6 border-b border-slate-200 pb-2">
+        <div className="flex flex-wrap gap-4">
+          {['PENDING', 'PACKED', 'SEND'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-3 font-semibold transition ${activeTab === tab
                 ? 'border-b-2 border-brand text-slate-950'
                 : 'text-slate-500 hover:text-slate-700'
-              }`}
-          >
-            {tab === 'SEND' ? 'Sent' : tab.charAt(0) + tab.slice(1).toLowerCase()}
-            <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs">
-              {orders.filter(o => o.status === tab).length}
-            </span>
-          </button>
-        ))}
+                }`}
+            >
+              {tab === 'SEND' ? 'Sent' : tab.charAt(0) + tab.slice(1).toLowerCase()}
+              <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs">
+                {orders.filter(o => o.status === tab).length}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="relative flex-grow">
+            <svg xmlns="http://www.w3.org/2000/svg" className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search by Order ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-500">Date:</span>
+            <input
+              type="date"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10"
+            />
+            {dateFilter && (
+              <button 
+                onClick={() => setDateFilter('')}
+                className="p-3 text-slate-400 hover:text-rose-500 transition"
+                title="Clear date filter"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">

@@ -7,6 +7,8 @@ function SalesOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
   const navigate = useNavigate();
 
   const loadOrders = async () => {
@@ -69,6 +71,41 @@ function SalesOrdersPage() {
       {error && <div className="rounded-3xl bg-rose-500/10 p-4 text-sm text-rose-700">{error}</div>}
       {success && <div className="rounded-3xl bg-brand/10 p-4 text-sm text-brand">{success}</div>}
 
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="relative flex-grow">
+          <svg xmlns="http://www.w3.org/2000/svg" className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by Order ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-slate-500">Date:</span>
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10"
+          />
+          {dateFilter && (
+            <button 
+              onClick={() => setDateFilter('')}
+              className="p-3 text-slate-400 hover:text-rose-500 transition"
+              title="Clear date filter"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm text-slate-600">
           <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase text-slate-500">
@@ -85,10 +122,18 @@ function SalesOrdersPage() {
           <tbody className="divide-y divide-slate-200 bg-white">
             {loading ? (
               <tr><td colSpan="7" className="px-6 py-4 text-center">Loading...</td></tr>
-            ) : orders.length === 0 ? (
-              <tr><td colSpan="7" className="px-6 py-4 text-center">No orders found.</td></tr>
-            ) : (
-              orders.map((order) => (
+            ) : (() => {
+              const filteredOrders = orders.filter(o => {
+                const matchesSearch = o.orderId.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesDate = !dateFilter || o.requiredDate === dateFilter;
+                return matchesSearch && matchesDate;
+              });
+
+              if (filteredOrders.length === 0) {
+                return <tr><td colSpan="7" className="px-6 py-4 text-center">No orders found.</td></tr>;
+              }
+
+              return filteredOrders.map((order) => (
                 <tr key={order.orderId} className="hover:bg-slate-50">
                   <td className="px-6 py-4 font-semibold text-slate-950">{order.orderId}</td>
                   <td className="px-6 py-4">{order.requiredDate}</td>
@@ -137,8 +182,8 @@ function SalesOrdersPage() {
                     )}
                   </td>
                 </tr>
-              ))
-            )}
+              ));
+            })()}
           </tbody>
         </table>
       </div>
