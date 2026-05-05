@@ -74,7 +74,7 @@ function SalesOrdersPage() {
         )}
       </div>
 
-      {isAdmin && (
+      {(isAdmin || user?.role === 'SALES_MANAGEMENT') && (
         <div className="flex gap-4 border-b border-slate-200">
           {['ALL', 'PENDING', 'PACKED', 'SEND'].map(tab => (
             <button

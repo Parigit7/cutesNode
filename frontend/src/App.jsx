@@ -16,6 +16,15 @@ function App() {
     navigate('/');
   };
 
+  const getPortalName = (role) => {
+    switch (role) {
+      case 'ADMIN': return 'Admin Portal';
+      case 'SALES_MANAGEMENT': return 'Sales Management Portal';
+      case 'PACKAGE': return 'Package Management Portal';
+      default: return 'User Portal';
+    }
+  };
+
   // Close menu on route change
   useEffect(() => {
     setIsMenuOpen(false);
@@ -75,10 +84,13 @@ function App() {
             {currentUser && (
               <div className="ml-4 flex items-center gap-4 pl-4 border-l border-slate-200">
                 <div className="flex flex-col items-end">
+                  <span className="text-[9px] font-black text-[#a53973] uppercase tracking-[0.15em] leading-none mb-1.5">
+                    {getPortalName(currentUser.role)}
+                  </span>
                   <span className="text-xs font-bold text-slate-900">{currentUser.username}</span>
                   <button
                     onClick={handleAdminLogout}
-                    className="text-[10px] font-bold text-rose-500 uppercase hover:text-rose-600 transition"
+                    className="text-[10px] font-bold text-rose-500 uppercase hover:text-rose-600 transition mt-0.5"
                   >
                     Sign Out
                   </button>
@@ -125,8 +137,10 @@ function App() {
                 <div className="mt-4 border-t border-slate-100 pt-4">
                   <div className="flex items-center justify-between px-5 mb-4">
                     <div className="flex flex-col">
+                      <span className="text-[9px] font-black text-[#a53973] uppercase tracking-[0.15em] leading-none mb-1.5">
+                        {getPortalName(currentUser.role)}
+                      </span>
                       <span className="text-sm font-bold text-slate-900">{currentUser.username}</span>
-                      <span className="text-[10px] text-slate-400 uppercase tracking-widest">{currentUser.role}</span>
                     </div>
                     <button
                       onClick={handleAdminLogout}
