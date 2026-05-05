@@ -52,54 +52,54 @@ function StoreItemsPage() {
 
   return (
     <div className="w-full bg-white font-sans text-slate-900 overflow-x-hidden">
-      {/* Ultra-Modern Sophisticated Header Section */}
-      <section className="relative w-full px-6 py-20 md:px-12 md:py-32 bg-[#fffafb] overflow-hidden flex flex-col items-center justify-center">
-        {/* Animated Mesh Gradient Background */}
+      {/* High-Fidelity Ultra-Modern Header Section - Compact */}
+      <section className="relative w-full px-6 py-10 md:px-12 md:py-16 bg-[#fffafb] overflow-hidden flex flex-col items-center justify-center">
+        {/* Advanced Mesh Gradient Background */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#a53973]/10 rounded-full blur-[120px] animate-pulse duration-[8000ms]" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-pink-200/30 rounded-full blur-[120px] animate-pulse duration-[10000ms]" />
+          <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-[#a53973]/10 rounded-full blur-[140px] animate-pulse duration-[12000ms]" />
+          <div className="absolute bottom-[-20%] right-[-10%] w-[80%] h-[80%] bg-pink-200/40 rounded-full blur-[140px] animate-pulse duration-[15000ms]" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0)_0%,rgba(255,255,255,1)_100%)]" />
         </div>
 
         <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
-          {/* Glassmorphism Floating Container */}
-          <div className="relative w-full max-w-4xl rounded-[4rem] bg-white/60 backdrop-blur-3xl border border-white p-12 md:p-20 shadow-[0_32px_64px_-16px_rgba(165,57,115,0.12)] flex flex-col items-center text-center transition-all duration-700 hover:shadow-[0_48px_80px_-20px_rgba(165,57,115,0.18)] hover:-translate-y-2 group">
-            
-            {/* Cute Decorative Elements */}
-            <div className="absolute -top-6 -left-6 h-12 w-12 rounded-2xl bg-[#a53973] shadow-lg shadow-[#a53973]/20 flex items-center justify-center rotate-12 group-hover:rotate-0 transition-transform duration-500">
-               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-               </svg>
+          {/* Professional Glassmorphism Container */}
+          <div className="relative w-full max-w-3xl rounded-[3rem] bg-white/40 backdrop-blur-3xl border border-white/80 p-8 md:p-12 shadow-[0_32px_120px_-20px_rgba(165,57,115,0.15)] flex flex-col items-center text-center transition-all duration-700 hover:shadow-[0_48px_140px_-25px_rgba(165,57,115,0.22)] hover:-translate-y-1 group">
+
+            {/* Cute Decorative Accent */}
+            <div className="absolute -top-4 -left-4 h-12 w-12 rounded-2xl bg-[#a53973] shadow-2xl shadow-[#a53973]/30 flex items-center justify-center rotate-12 group-hover:rotate-0 transition-transform duration-700">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
             </div>
 
-            <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white shadow-sm border border-slate-50 mb-12 animate-in fade-in slide-in-from-bottom-4">
-              <span className="flex h-2 w-2 rounded-full bg-[#a53973] animate-ping" />
-              <span className="text-xs font-black uppercase tracking-[0.4em] text-[#a53973]/60">Hand-Picked with Love</span>
+            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white shadow-lg shadow-pink-500/5 border border-slate-50 mb-8 animate-in fade-in slide-in-from-bottom-4">
+              <span className="flex h-1.5 w-1.5 rounded-full bg-[#a53973] animate-ping" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#a53973]/60">Hand-Picked with Love</span>
             </div>
-            
-            <h1 className="text-6xl md:text-9xl font-black tracking-tight text-[#a53973] mb-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 leading-[0.85]">
+
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-[#a53973] mb-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 leading-[0.85]">
               Explore our <br />
               <span className="bg-gradient-to-r from-[#a53973] via-pink-500 to-[#a53973] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">Gift Shop</span>
             </h1>
-            
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
-              <p className="max-w-2xl text-2xl md:text-3xl text-slate-700 font-black leading-tight">
-                Beautifully curated items for your special moments.
+
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
+              <p className="max-w-xl text-xl md:text-2xl text-slate-700 font-black tracking-tight leading-tight">
+                Beautifully curated items <br className="hidden md:block" /> for your special moments.
               </p>
               <div className="flex items-center justify-center gap-4">
                 <span className="h-px w-8 bg-pink-200" />
-                <p className="text-lg text-slate-400 font-bold tracking-wide">
+                <p className="text-sm md:text-base text-slate-400 font-bold tracking-wide italic">
                   Hand-picked with love and delivered with care.
                 </p>
                 <span className="h-px w-8 bg-pink-200" />
               </div>
             </div>
 
-            {/* Bottom Accent */}
+            {/* Bottom Accent Decor */}
             <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-3">
-               {[...Array(3)].map((_, i) => (
-                 <div key={i} className={`h-2 w-2 rounded-full bg-[#a53973] opacity-${(3-i)*20}`} />
-               ))}
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className={`h-1.5 w-1.5 rounded-full bg-[#a53973] opacity-${(3 - i) * 20}`} />
+              ))}
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@ function StoreItemsPage() {
         )}
 
         {/* Items Grid - Keeping existing Card UI as requested */}
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
           {availableItems.length === 0 ? (
             <div className="col-span-full rounded-[3rem] border border-dashed border-slate-200 bg-slate-50/30 py-24 text-center">
               <div className="text-6xl mb-4 opacity-20">🛍️</div>
