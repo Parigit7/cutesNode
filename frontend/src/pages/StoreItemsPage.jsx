@@ -51,7 +51,7 @@ function StoreItemsPage() {
   }
 
   return (
-    <div className="w-full bg-white font-sans text-slate-900 overflow-x-hidden">
+    <div className="w-full bg-white font-sans text-slate-700 overflow-x-hidden">
       {/* High-Fidelity Ultra-Modern Header Section - Compact */}
       <section className="relative w-full px-6 py-10 md:px-12 md:py-16 bg-[#fffafb] overflow-hidden flex flex-col items-center justify-center">
         {/* Advanced Mesh Gradient Background */}
@@ -142,7 +142,7 @@ function StoreItemsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name or code..."
-              className="w-full rounded-[1.5rem] border border-slate-100 bg-white py-4 pl-16 pr-8 text-sm font-bold text-slate-900 placeholder:text-slate-300 outline-none transition focus:ring-4 focus:ring-[#a53973]/5"
+              className="w-full rounded-[1.5rem] border border-slate-100 bg-white py-4 pl-16 pr-8 text-sm font-bold text-slate-700 placeholder:text-slate-300 outline-none transition focus:ring-4 focus:ring-[#a53973]/5"
             />
           </div>
         </div>
@@ -213,7 +213,7 @@ function StoreItemsPage() {
                         {item.code}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#a53973] transition-colors line-clamp-1">
+                    <h3 className="text-xl font-bold text-slate-700 group-hover:text-[#a53973] transition-colors line-clamp-1">
                       {item.title}
                     </h3>
                   </div>
@@ -245,7 +245,7 @@ function StoreItemsPage() {
           <div className="relative max-h-[90vh] max-w-5xl overflow-hidden rounded-[2rem] bg-white p-2 shadow-2xl animate-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setSelectedImage(null)}
-              className="absolute right-6 top-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/50 text-white backdrop-blur-md transition hover:bg-slate-900"
+              className="absolute right-6 top-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-slate-700/50 text-white backdrop-blur-md transition hover:bg-slate-700"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

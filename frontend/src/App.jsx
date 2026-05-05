@@ -55,11 +55,11 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-950 font-sans">
-      <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur">
-        <div className="flex w-full items-center justify-between gap-4 px-5 py-2 lg:px-8">
-          <Link to="/" className="flex items-center hover:opacity-90 transition py-1">
-            <div className="h-16 w-16 md:h-28 md:w-28 flex items-center justify-center p-1">
+    <div className="min-h-screen bg-white text-slate-800 font-sans">
+      <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/90 shadow-[0_1px_15px_rgba(0,0,0,0.02)] backdrop-blur-xl">
+        <div className="flex w-full items-center justify-between gap-4 px-5 py-1 md:py-1.5 lg:px-10">
+          <Link to="/" className="flex items-center hover:opacity-90 transition py-0.5">
+            <div className="h-12 w-12 md:h-20 md:w-20 flex items-center justify-center p-1">
               <img src="/logo.png" alt="Cutes.lk Logo" className="h-full w-full object-contain" />
             </div>
           </Link>
@@ -87,7 +87,7 @@ function App() {
                   <span className="text-[9px] font-black text-[#a53973] uppercase tracking-[0.15em] leading-none mb-1.5">
                     {getPortalName(currentUser.role)}
                   </span>
-                  <span className="text-xs font-bold text-slate-900">{currentUser.username}</span>
+                  <span className="text-xs font-bold text-slate-700">{currentUser.username}</span>
                   <button
                     onClick={handleAdminLogout}
                     className="text-[10px] font-bold text-rose-500 uppercase hover:text-rose-600 transition mt-0.5"
@@ -140,7 +140,7 @@ function App() {
                       <span className="text-[9px] font-black text-[#a53973] uppercase tracking-[0.15em] leading-none mb-1.5">
                         {getPortalName(currentUser.role)}
                       </span>
-                      <span className="text-sm font-bold text-slate-900">{currentUser.username}</span>
+                      <span className="text-sm font-bold text-slate-700">{currentUser.username}</span>
                     </div>
                     <button
                       onClick={handleAdminLogout}
