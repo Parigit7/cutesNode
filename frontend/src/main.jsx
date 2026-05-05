@@ -14,6 +14,7 @@ import AddOrderPage from './pages/AddOrderPage';
 import SalesItemsPage from './pages/SalesItemsPage';
 import RequirePackage from './components/RequirePackage';
 import PackageOrdersPage from './pages/PackageOrdersPage';
+import StoreItemsPage from './pages/StoreItemsPage';
 import './index.css';
 
 const router = createBrowserRouter(
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
       element: <App />,
       children: [
         { index: true, element: <HomePage /> },
+        { path: 'store', element: <StoreItemsPage /> },
         { path: 'login', element: <LoginPage /> },
         { path: 'admin', element: <RequireAdmin><AdminPanel /></RequireAdmin> },
         { path: 'admin/items', element: <RequireAdmin><ItemsPage /></RequireAdmin> },

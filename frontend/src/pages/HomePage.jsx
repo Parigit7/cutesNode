@@ -41,20 +41,22 @@ function HomePage() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-5 pt-2">
               <Link
-                className="w-full sm:w-auto group relative inline-flex items-center justify-center px-8 md:px-10 py-3.5 md:py-4 font-bold text-white transition-all duration-500 bg-brand rounded-xl md:rounded-2xl hover:bg-brand/90 hover:scale-[1.03] active:scale-95 shadow-[0_20px_40px_-10px_rgba(165,57,115,0.3)] overflow-hidden"
-                to="/login"
+                className="w-full sm:w-auto group relative inline-flex items-center justify-center px-8 md:px-10 py-3.5 md:py-4 font-bold text-white transition-all duration-500 bg-[#a53973] rounded-xl md:rounded-2xl hover:bg-[#a53973]/90 hover:scale-[1.03] active:scale-95 shadow-[0_20px_40px_-10px_rgba(165,57,115,0.3)] overflow-hidden"
+                to="/store"
               >
-                <span className="relative z-10 text-sm md:text-base">Enter Management</span>
+                <span className="relative z-10 text-sm md:text-base">View Store Items</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               </Link>
 
-              <div className="w-full sm:w-auto flex flex-col items-center sm:items-start px-6 py-3 rounded-xl md:rounded-2xl bg-white border border-slate-100 shadow-sm transition-transform hover:translate-y-[-2px]">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">System Live</span>
-                </div>
-                <p className="text-xs md:text-sm font-bold text-slate-800">Operational & Secure</p>
-              </div>
+              <Link
+                className="w-full sm:w-auto group relative inline-flex items-center justify-center px-8 md:px-10 py-3.5 md:py-4 font-bold text-[#a53973] transition-all duration-500 bg-white border-2 border-[#a53973]/20 rounded-xl md:rounded-2xl hover:bg-[#a53973]/5 hover:border-[#a53973]/40 hover:scale-[1.03] active:scale-95 shadow-sm overflow-hidden"
+                to="/login"
+              >
+                <span className="relative z-10 text-sm md:text-base">Enter Management</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#a53973]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              </Link>
+
+              {/* Status Indicator Removed */}
             </div>
           </div>
 

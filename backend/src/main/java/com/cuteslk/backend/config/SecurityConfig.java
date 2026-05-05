@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/items", "/api/categories").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

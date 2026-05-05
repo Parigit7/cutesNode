@@ -160,8 +160,6 @@ function App() {
         <main>
           <Outlet />
         </main>
-
-
       </div>
     </div>
   );
