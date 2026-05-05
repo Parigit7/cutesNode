@@ -52,27 +52,49 @@ function StoreItemsPage() {
 
   return (
     <div className="w-full bg-white font-sans text-slate-900 overflow-x-hidden">
-      {/* Refined Modern Header Section */}
-      <section className="relative w-full px-6 py-12 md:px-12 md:py-16 bg-[#fafafa] overflow-hidden">
-        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[40rem] h-[40rem] bg-gradient-to-br from-[#a53973]/5 to-transparent rounded-full blur-[80px]" />
+      {/* Ultra-Modern Glassmorphism Header Section */}
+      <section className="relative w-full px-6 py-16 md:px-12 md:py-24 bg-white overflow-hidden">
+        {/* Animated Background Layers */}
+        <div 
+          className="absolute inset-0 z-0 opacity-100"
+          style={{ 
+            backgroundImage: `url('/pink_bg.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(2px)'
+          }}
+        />
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-white/10 via-transparent to-[#a53973]/5" />
+        
+        {/* Floating Decorative Elements */}
+        <div className="absolute top-10 right-[10%] w-32 h-32 bg-[#a53973]/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 left-[5%] w-48 h-48 bg-blue-500/5 rounded-full blur-3xl" />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-sm border border-slate-100 mb-6 animate-in fade-in slide-in-from-bottom-2">
-            <span className="flex h-1.5 w-1.5 rounded-full bg-[#a53973]" />
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Curated Collection</span>
-          </div>
+        <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
+          <div className="w-full max-w-3xl rounded-[3rem] bg-white/40 backdrop-blur-2xl border border-white/60 p-10 md:p-16 shadow-[0_20px_50px_rgba(165,57,115,0.1)] transition-all duration-500 hover:shadow-[0_30px_70px_rgba(165,57,115,0.15)] flex flex-col items-center text-center">
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 shadow-sm border border-white mb-10 animate-in fade-in slide-in-from-bottom-2">
+              <span className="flex h-2 w-2 rounded-full bg-[#a53973] animate-pulse" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#a53973]/60">Hand-Picked with Love</span>
+            </div>
+            
+            <h1 className="text-5xl md:text-8xl font-black tracking-tight text-[#a53973] mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 leading-[0.9]">
+              Explore our <br />
+              <span className="bg-gradient-to-r from-[#a53973] to-pink-400 bg-clip-text text-transparent">Gift Shop</span>
+            </h1>
+            
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
+              <p className="max-w-xl text-xl md:text-2xl text-slate-600 font-black leading-relaxed">
+                Beautifully curated items for your special moments.
+              </p>
+              <p className="max-w-xl text-lg text-slate-500 font-bold leading-relaxed">
+                Hand-picked with love and delivered with care.
+              </p>
+            </div>
 
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-[#a53973] mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            Explore our Gift Shop
-          </h1>
-
-          <div className="space-y-1 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-            <p className="max-w-2xl text-lg text-slate-600 font-bold leading-relaxed">
-              Beautifully curated items for your special moments.
-            </p>
-            <p className="max-w-2xl text-base text-slate-500 font-medium leading-relaxed">
-              Hand-picked with love and delivered with care.
-            </p>
+            <div className="mt-12 flex gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 justify-center">
+               <div className="h-1.5 w-16 rounded-full bg-[#a53973]/30" />
+               <div className="h-1.5 w-6 rounded-full bg-[#a53973]/10" />
+            </div>
           </div>
         </div>
       </section>
