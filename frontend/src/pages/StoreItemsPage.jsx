@@ -52,48 +52,54 @@ function StoreItemsPage() {
 
   return (
     <div className="w-full bg-white font-sans text-slate-900 overflow-x-hidden">
-      {/* Ultra-Modern Glassmorphism Header Section */}
-      <section className="relative w-full px-6 py-16 md:px-12 md:py-24 bg-white overflow-hidden">
-        {/* Animated Background Layers */}
-        <div 
-          className="absolute inset-0 z-0 opacity-100"
-          style={{ 
-            backgroundImage: `url('/pink_bg.png')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'blur(2px)'
-          }}
-        />
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-white/10 via-transparent to-[#a53973]/5" />
-        
-        {/* Floating Decorative Elements */}
-        <div className="absolute top-10 right-[10%] w-32 h-32 bg-[#a53973]/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 left-[5%] w-48 h-48 bg-blue-500/5 rounded-full blur-3xl" />
+      {/* Ultra-Modern Sophisticated Header Section */}
+      <section className="relative w-full px-6 py-20 md:px-12 md:py-32 bg-[#fffafb] overflow-hidden flex flex-col items-center justify-center">
+        {/* Animated Mesh Gradient Background */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#a53973]/10 rounded-full blur-[120px] animate-pulse duration-[8000ms]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-pink-200/30 rounded-full blur-[120px] animate-pulse duration-[10000ms]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0)_0%,rgba(255,255,255,1)_100%)]" />
+        </div>
 
         <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
-          <div className="w-full max-w-3xl rounded-[3rem] bg-white/40 backdrop-blur-2xl border border-white/60 p-10 md:p-16 shadow-[0_20px_50px_rgba(165,57,115,0.1)] transition-all duration-500 hover:shadow-[0_30px_70px_rgba(165,57,115,0.15)] flex flex-col items-center text-center">
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 shadow-sm border border-white mb-10 animate-in fade-in slide-in-from-bottom-2">
-              <span className="flex h-2 w-2 rounded-full bg-[#a53973] animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#a53973]/60">Hand-Picked with Love</span>
-            </div>
+          {/* Glassmorphism Floating Container */}
+          <div className="relative w-full max-w-4xl rounded-[4rem] bg-white/60 backdrop-blur-3xl border border-white p-12 md:p-20 shadow-[0_32px_64px_-16px_rgba(165,57,115,0.12)] flex flex-col items-center text-center transition-all duration-700 hover:shadow-[0_48px_80px_-20px_rgba(165,57,115,0.18)] hover:-translate-y-2 group">
             
-            <h1 className="text-5xl md:text-8xl font-black tracking-tight text-[#a53973] mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 leading-[0.9]">
-              Explore our <br />
-              <span className="bg-gradient-to-r from-[#a53973] to-pink-400 bg-clip-text text-transparent">Gift Shop</span>
-            </h1>
-            
-            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
-              <p className="max-w-xl text-xl md:text-2xl text-slate-600 font-black leading-relaxed">
-                Beautifully curated items for your special moments.
-              </p>
-              <p className="max-w-xl text-lg text-slate-500 font-bold leading-relaxed">
-                Hand-picked with love and delivered with care.
-              </p>
+            {/* Cute Decorative Elements */}
+            <div className="absolute -top-6 -left-6 h-12 w-12 rounded-2xl bg-[#a53973] shadow-lg shadow-[#a53973]/20 flex items-center justify-center rotate-12 group-hover:rotate-0 transition-transform duration-500">
+               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+               </svg>
             </div>
 
-            <div className="mt-12 flex gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300 justify-center">
-               <div className="h-1.5 w-16 rounded-full bg-[#a53973]/30" />
-               <div className="h-1.5 w-6 rounded-full bg-[#a53973]/10" />
+            <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white shadow-sm border border-slate-50 mb-12 animate-in fade-in slide-in-from-bottom-4">
+              <span className="flex h-2 w-2 rounded-full bg-[#a53973] animate-ping" />
+              <span className="text-xs font-black uppercase tracking-[0.4em] text-[#a53973]/60">Hand-Picked with Love</span>
+            </div>
+            
+            <h1 className="text-6xl md:text-9xl font-black tracking-tight text-[#a53973] mb-10 animate-in fade-in slide-in-from-bottom-8 duration-1000 leading-[0.85]">
+              Explore our <br />
+              <span className="bg-gradient-to-r from-[#a53973] via-pink-500 to-[#a53973] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">Gift Shop</span>
+            </h1>
+            
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
+              <p className="max-w-2xl text-2xl md:text-3xl text-slate-700 font-black leading-tight">
+                Beautifully curated items for your special moments.
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <span className="h-px w-8 bg-pink-200" />
+                <p className="text-lg text-slate-400 font-bold tracking-wide">
+                  Hand-picked with love and delivered with care.
+                </p>
+                <span className="h-px w-8 bg-pink-200" />
+              </div>
+            </div>
+
+            {/* Bottom Accent */}
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-3">
+               {[...Array(3)].map((_, i) => (
+                 <div key={i} className={`h-2 w-2 rounded-full bg-[#a53973] opacity-${(3-i)*20}`} />
+               ))}
             </div>
           </div>
         </div>
