@@ -10,6 +10,8 @@ function SalesOrdersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState('');
   const [activeTab, setActiveTab] = useState('ALL'); // ALL, PENDING, PACKED, SEND
+  const [createdByFilter, setCreatedByFilter] = useState('');
+  const [packedByFilter, setPackedByFilter] = useState('');
   const [expandedOrderId, setExpandedOrderId] = useState(null);
   const navigate = useNavigate();
 
@@ -108,26 +110,56 @@ function SalesOrdersPage() {
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-12 pr-4 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-slate-500">Date:</span>
-          <input
-            type="date"
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
-            onClick={(e) => e.target.showPicker?.()}
-            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 cursor-pointer"
-          />
-          {dateFilter && (
-            <button 
-              onClick={() => setDateFilter('')}
-              className="p-3 text-slate-400 hover:text-rose-500 transition"
-              title="Clear date filter"
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-500 whitespace-nowrap">Created By:</span>
+            <select
+              value={createdByFilter}
+              onChange={(e) => setCreatedByFilter(e.target.value)}
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 cursor-pointer"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
-          )}
+              <option value="">All Staff</option>
+              {[...new Set(orders.map(o => o.createdBy).filter(Boolean))].map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-500 whitespace-nowrap">Packed By:</span>
+            <select
+              value={packedByFilter}
+              onChange={(e) => setPackedByFilter(e.target.value)}
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 cursor-pointer"
+            >
+              <option value="">All Staff</option>
+              {[...new Set(orders.map(o => o.packedBy).filter(Boolean))].map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-slate-500 whitespace-nowrap">Date:</span>
+            <input
+              type="date"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              onClick={(e) => e.target.showPicker?.()}
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 cursor-pointer"
+            />
+            {dateFilter && (
+              <button 
+                onClick={() => setDateFilter('')}
+                className="p-3 text-slate-400 hover:text-rose-500 transition"
+                title="Clear date filter"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -150,7 +182,9 @@ function SalesOrdersPage() {
                 const matchesSearch = o.orderId.toLowerCase().includes(searchQuery.toLowerCase());
                 const matchesDate = !dateFilter || o.requiredDate === dateFilter;
                 const matchesTab = activeTab === 'ALL' || o.status === activeTab;
-                return matchesSearch && matchesDate && matchesTab;
+                const matchesCreatedBy = !createdByFilter || o.createdBy === createdByFilter;
+                const matchesPackedBy = !packedByFilter || o.packedBy === packedByFilter;
+                return matchesSearch && matchesDate && matchesTab && matchesCreatedBy && matchesPackedBy;
               });
 
               if (filteredOrders.length === 0) {
