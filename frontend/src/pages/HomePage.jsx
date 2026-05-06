@@ -16,6 +16,13 @@ function HomePage() {
       <div className="absolute top-[40%] right-[10%] text-7xl animate-float-delayed opacity-30">✨</div>
       <div className="absolute bottom-20 left-[10%] text-5xl animate-float opacity-20">💝</div>
       <div className="absolute bottom-[30%] right-[20%] text-6xl animate-float-delayed opacity-25">🌸</div>
+      
+      {/* Additional Floating Gifts */}
+      <div className="absolute top-[10%] right-[30%] text-5xl animate-float opacity-30 [animation-delay:1s]">🎁</div>
+      <div className="absolute top-[60%] left-[20%] text-4xl animate-float-delayed opacity-20 [animation-delay:3s]">🧸</div>
+      <div className="absolute bottom-[40%] left-[40%] text-5xl animate-float opacity-25 [animation-delay:2s]">🎀</div>
+      <div className="absolute top-[50%] left-[5%] text-4xl animate-float-delayed opacity-15 [animation-delay:5s]">🍫</div>
+      <div className="absolute bottom-[10%] right-[40%] text-5xl animate-float opacity-20 [animation-delay:4s]">🍭</div>
 
       <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-12 flex flex-col items-center text-center">
         
