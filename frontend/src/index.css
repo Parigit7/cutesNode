@@ -4,7 +4,17 @@
 
 :root {
   color-scheme: light;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Bubblegum Sans', 'Fredoka', cursive;
+}
+
+.text-bubbly {
+  -webkit-text-stroke: 2px #a53973;
+  text-shadow: 4px 4px 0 #a53973;
+}
+
+.text-bubbly-white {
+  -webkit-text-stroke: 2px #ffffff;
+  text-shadow: 4px 4px 0 rgba(165, 57, 115, 0.2);
 }
 
 html, body, #root {
