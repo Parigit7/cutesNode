@@ -155,8 +155,8 @@ function App() {
           </div>
         )}
       </header>
-
-      <div className="w-full px-4 py-4 lg:px-8">
+      {/* jqjq */}
+      <div className="w-full">
         <main>
           <Outlet />
         </main>
