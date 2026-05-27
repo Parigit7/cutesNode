@@ -1,10 +1,15 @@
 import { Link, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { CartIcon } from './components/CartIcon';
+import CartDropdown from './components/CartDropdown';
+import { useCart } from './context/CartContext';
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { cart } = useCart();
 
   const stored = typeof window !== 'undefined' ? localStorage.getItem('cutes-user') : null;
   const currentUser = stored ? JSON.parse(stored) : null;
@@ -95,6 +100,17 @@ function App() {
                     Sign Out
                   </button>
                 </div>
+              </div>
+            )}
+            {location.pathname.startsWith('/store') && (
+              <div className="ml-4 relative">
+                <button
+                  onClick={() => setIsCartOpen((v) => !v)}
+                  className="flex items-center justify-center rounded-full p-2 hover:bg-slate-100 transition"
+                >
+                  <CartIcon count={cart.length} />
+                </button>
+                <CartDropdown open={isCartOpen} onClose={() => setIsCartOpen(false)} />
               </div>
             )}
           </nav>

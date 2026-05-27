@@ -16,6 +16,7 @@ import RequirePackage from './components/RequirePackage';
 import PackageOrdersPage from './pages/PackageOrdersPage';
 import StoreItemsPage from './pages/StoreItemsPage';
 import './index.css';
+import { CartProvider } from './context/CartContext';
 
 const router = createBrowserRouter(
   [
@@ -48,6 +49,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
   </React.StrictMode>
 );

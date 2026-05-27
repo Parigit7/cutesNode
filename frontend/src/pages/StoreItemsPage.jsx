@@ -1,7 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
+import { useCart } from '../context/CartContext';
 import api from '../services/api';
 
 function StoreItemsPage() {
+  const { addToCart } = useCart();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -41,6 +43,20 @@ function StoreItemsPage() {
   const categories = useMemo(() => {
     return ['All', ...new Set(items.map(item => item.category))];
   }, [items]);
+
+  // Track quantity for each item
+  const [qtyMap, setQtyMap] = useState({});
+
+  const handleQtyChange = (id, value) => {
+    setQtyMap((prev) => ({ ...prev, [id]: Math.max(1, Number(value) || 1) }));
+  };
+
+  const handleAddToCart = (item) => {
+    const qty = qtyMap[item.id] || 1;
+    addToCart(item, qty);
+    setQtyMap((prev) => ({ ...prev, [item.id]: 1 }));
+    // Optionally show a message or toast here
+  };
 
   if (loading) {
     return (
@@ -170,11 +186,10 @@ function StoreItemsPage() {
             availableItems.map((item, index) => (
               <article
                 key={item.id}
-                onClick={() => setSelectedImage(item.image)}
-                className="group flex flex-col overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white transition-all duration-500 hover:shadow-[0_20px_50px_rgba(15,23,42,0.06)] hover:-translate-y-1 cursor-pointer"
+                className="group flex flex-col overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white transition-all duration-500 hover:shadow-[0_20px_50px_rgba(15,23,42,0.06)] hover:-translate-y-1"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                <div className="relative h-64 overflow-hidden bg-slate-50">
+                <div className="relative h-64 overflow-hidden bg-slate-50 cursor-pointer" onClick={() => setSelectedImage(item.image)}>
                   {item.image ? (
                     <img
                       src={item.image}
@@ -218,15 +233,28 @@ function StoreItemsPage() {
                     </h3>
                   </div>
 
-                  <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Price</p>
-                      <p className="text-2xl font-black text-slate-950">Rs. {item.price.toFixed(2)}</p>
+                  <div className="mt-auto pt-4 border-t border-slate-50 flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Price</p>
+                        <p className="text-2xl font-black text-slate-950">Rs. {item.price.toFixed(2)}</p>
+                      </div>
                     </div>
-                    <div className="h-10 w-10 rounded-full bg-[#a53973]/5 flex items-center justify-center text-[#a53973] transition-colors group-hover:bg-[#a53973] group-hover:text-white shadow-inner">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
+                    <div className="flex items-center gap-2 mt-2">
+                      <input
+                        type="number"
+                        min={1}
+                        value={qtyMap[item.id] || 1}
+                        onChange={e => handleQtyChange(item.id, e.target.value)}
+                        className="w-16 rounded-xl border border-slate-200 px-2 py-1 text-center font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#a53973]/20"
+                      />
+                      <button
+                        className="rounded-xl bg-[#a53973] text-white font-bold px-4 py-2 hover:bg-[#a53973]/90 transition-all"
+                        onClick={() => handleAddToCart(item)}
+                        type="button"
+                      >
+                        Add to Cart
+                      </button>
                     </div>
                   </div>
                 </div>
