@@ -62,7 +62,7 @@ function App() {
   return (
     <div className="min-h-screen bg-white text-slate-800 font-sans">
       <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/90 shadow-[0_1px_15px_rgba(0,0,0,0.02)] backdrop-blur-xl">
-        <div className="flex w-full items-center justify-between gap-4 px-5 py-1 md:py-1.5 lg:px-10">
+        <div className="flex w-full items-center justify-between gap-4 px-5 py-1 md:py-1.5 lg:px-10 relative">
           <Link to="/" className="flex items-center hover:opacity-90 transition py-0.5">
             <div className="h-12 w-12 md:h-20 md:w-20 flex items-center justify-center p-1">
               <img src="/logo.png" alt="Cutes.lk Logo" className="h-full w-full object-contain" />
@@ -110,26 +110,38 @@ function App() {
                 >
                   <CartIcon count={cart.length} />
                 </button>
-                <CartDropdown open={isCartOpen} onClose={() => setIsCartOpen(false)} />
               </div>
             )}
           </nav>
 
-          {/* Mobile Menu Trigger */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="flex h-10 w-10 md:hidden items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200"
-          >
-            {isMenuOpen ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-              </svg>
+          {/* Mobile Nav: Hamburger + Cart Icon (always visible on /store) */}
+          <div className="md:hidden flex items-center gap-2 ml-auto">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200"
+              aria-label="Open navigation menu"
+            >
+              {isMenuOpen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+              )}
+            </button>
+            {location.pathname.startsWith('/store') && (
+              <button
+                onClick={() => setIsCartOpen((v) => !v)}
+                className="flex items-center justify-center rounded-full p-2 hover:bg-slate-100 transition"
+                aria-label="Open cart"
+              >
+                <CartIcon count={cart.length} />
+              </button>
             )}
-          </button>
+          </div>
+          <CartDropdown open={isCartOpen} onClose={() => setIsCartOpen(false)} />
         </div>
 
         {/* Mobile Menu Dropdown */}
