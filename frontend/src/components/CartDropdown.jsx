@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
+// (no external libs needed here)
 
 export default function CartDropdown({ open, onClose }) {
   const { cart, updateQty, removeFromCart } = useCart();
@@ -69,10 +70,31 @@ export default function CartDropdown({ open, onClose }) {
             ))}
           </div>
         )}
-        <div className="mt-6 flex items-center justify-between font-bold text-slate-700 text-lg">
+        <div className="mt-6 flex items-center justify-between font-bold text-slate-700 text-lg w-full">
           <span>Total:</span>
           <span className="text-[#a53973]">Rs. {total.toFixed(2)}</span>
         </div>
+
+        {cart.length > 0 && (
+          <button
+            className="mt-4 w-full rounded-xl bg-[#25D366] text-white font-bold py-3 flex items-center justify-center gap-2 text-base hover:bg-[#1ebe5d] transition-all"
+            onClick={() => {
+              const phone = '94707474512';
+              let msg = `Cutes.lk Order Details - Total: Rs. ${total.toFixed(2)}\n\n`;
+              cart.forEach((item, idx) => {
+                msg += `${idx + 1}. ${item.title} (Code: ${item.code}) - Qty: ${item.qty} x Rs. ${item.price.toFixed(2)} = Rs. ${(item.price * item.qty).toFixed(2)}\n`;
+              });
+              msg += `\nPlease ask for the PDF invoice if you need it.`;
+              const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+              window.open(url, '_blank');
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M20.52 3.48A12.07 12.07 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.97L0 24l6.22-1.63A12.07 12.07 0 0012 24c6.63 0 12-5.37 12-12 0-3.21-1.25-6.23-3.48-8.52zM12 22.13c-1.85 0-3.67-.5-5.24-1.44l-.37-.22-3.69.97.99-3.59-.24-.37C2.37 15.67 1.87 13.85 1.87 12 1.87 6.13 6.13 1.87 12 1.87c5.87 0 10.13 4.26 10.13 10.13 0 5.87-4.26 10.13-10.13 10.13zm5.13-7.13c-.23-.12-1.36-.67-1.57-.75-.21-.08-.36-.12-.51.12-.15.23-.58.75-.71.9-.13.15-.26.17-.49.06-.23-.12-.97-.36-1.85-1.13-.68-.6-1.14-1.34-1.28-1.57-.13-.23-.01-.35.1-.46.1-.1.23-.26.34-.39.11-.13.15-.23.23-.38.08-.15.04-.28-.02-.4-.06-.12-.51-1.23-.7-1.68-.18-.44-.37-.38-.51-.39-.13-.01-.28-.01-.43-.01-.15 0-.4.06-.61.28-.21.21-.8.78-.8 1.9 0 1.12.82 2.2.93 2.35.12.15 1.61 2.46 3.91 3.36.55.19.98.3 1.31.39.55.14 1.05.12 1.45.07.44-.07 1.36-.56 1.55-1.1.19-.54.19-1 .13-1.1-.06-.1-.21-.15-.44-.27z" fill="#fff"/>
+            </svg>
+            Send list via WhatsApp
+          </button>
+        )}
       </div>
     </div>
   );
