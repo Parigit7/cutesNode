@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { EyeIcon } from '../components/EyeIcon';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
@@ -8,6 +9,7 @@ function LoginPage() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -81,14 +83,25 @@ function LoginPage() {
 
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Password</label>
-              <input
-                type="password"
-                className="w-full rounded-2xl border border-slate-100 px-5 py-4 bg-white/50 focus:outline-none focus:ring-4 focus:ring-brand/10 focus:border-brand/30 focus:bg-white transition-all duration-300 placeholder:text-slate-300 font-medium"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="••••••••"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  className="w-full rounded-2xl border border-slate-100 px-5 py-4 bg-white/50 focus:outline-none focus:ring-4 focus:ring-brand/10 focus:border-brand/30 focus:bg-white transition-all duration-300 placeholder:text-slate-300 font-medium pr-12"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  <EyeIcon open={showPassword} />
+                </button>
+              </div>
             </div>
 
             <button
