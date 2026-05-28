@@ -20,7 +20,7 @@ function App() {
     setIsMenuOpen(false);
     navigate('/');
   };
-
+// comment
   const getPortalName = (role) => {
     switch (role) {
       case 'ADMIN': return 'Admin Portal';
