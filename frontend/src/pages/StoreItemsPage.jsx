@@ -10,6 +10,12 @@ function StoreItemsPage() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [selectedImage, setSelectedImage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 20;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, categoryFilter]);
 
   useEffect(() => {
     const loadItems = async () => {
@@ -39,6 +45,14 @@ function StoreItemsPage() {
       return isAvailable && matchesSearch && matchesCategory;
     });
   }, [items, search, categoryFilter]);
+
+  const totalItems = availableItems.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return availableItems.slice(start, start + ITEMS_PER_PAGE);
+  }, [availableItems, currentPage]);
 
   const categories = useMemo(() => {
     return ['All', ...new Set(items.map(item => item.category))];
@@ -183,7 +197,7 @@ function StoreItemsPage() {
               </button>
             </div>
           ) : (
-            availableItems.map((item, index) => (
+            paginatedItems.map((item, index) => (
               <article
                 key={item.id}
                 className="group flex flex-col overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white transition-all duration-500 hover:shadow-[0_20px_50px_rgba(15,23,42,0.06)] hover:-translate-y-1"
@@ -262,6 +276,54 @@ function StoreItemsPage() {
             ))
           )}
         </div>
+
+        {/* Brand-Styled Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-slate-100 mt-12">
+            <span className="text-sm font-bold text-slate-500">
+              Showing <span className="text-[#a53973]">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-[#a53973]">{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}</span> of <span className="text-[#a53973]">{totalItems}</span> items
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+              >
+                Previous
+              </button>
+              <div className="flex items-center gap-1">
+                {[...Array(totalPages)].map((_, i) => {
+                  const pageNum = i + 1;
+                  const isActive = pageNum === currentPage;
+                  if (totalPages > 6 && pageNum !== 1 && pageNum !== totalPages && Math.abs(pageNum - currentPage) > 1) {
+                    if (pageNum === 2 && currentPage > 3) return <span key={pageNum} className="text-slate-400 px-1">...</span>;
+                    if (pageNum === totalPages - 1 && currentPage < totalPages - 2) return <span key={pageNum} className="text-slate-400 px-1">...</span>;
+                    return null;
+                  }
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`h-9 w-9 rounded-xl flex items-center justify-center text-sm font-bold transition-all ${isActive
+                        ? 'bg-[#a53973] text-white shadow-md shadow-[#a53973]/20'
+                        : 'text-slate-600 hover:bg-slate-100'
+                        }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+              </div>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Full Image Modal */}
