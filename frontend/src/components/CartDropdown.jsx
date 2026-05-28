@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 export default function CartDropdown({ open, onClose }) {
   const { cart, updateQty, removeFromCart } = useCart();
   const cartRef = useRef(null);
+  const screenshotTemplateRef = useRef(null);
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   const targetPhone = '0707474512';
@@ -28,113 +29,26 @@ export default function CartDropdown({ open, onClose }) {
   };
 
   const handleShareCart = async () => {
-    if (!cartRef.current) {
+    if (!screenshotTemplateRef.current) {
       sendWhatsAppTextFallback();
       return;
     }
-    const createCaptureClone = (node) => {
-      const clone = node.cloneNode(true);
-      // copy computed font styles from original to ensure visual match
-      try {
-        const comp = window.getComputedStyle(node);
-        if (comp && comp.fontFamily) clone.style.fontFamily = comp.fontFamily;
-        if (comp && comp.fontSize) clone.style.fontSize = comp.fontSize;
-        if (comp && comp.fontWeight) clone.style.fontWeight = comp.fontWeight;
-        if (comp && comp.lineHeight) clone.style.lineHeight = comp.lineHeight;
-      } catch (e) {
-        // ignore
-      }
-      // Apply container styles for predictable rendering and full height capture
-      clone.style.width = '360px';
-      clone.style.maxWidth = '360px';
-      clone.style.boxSizing = 'border-box';
-      clone.style.padding = '16px';
-      clone.style.background = '#ffffff';
-      clone.style.color = '#111827';
-      clone.style.borderRadius = '16px';
-      clone.style.overflow = 'visible';
-      clone.style.maxHeight = 'none';
-      clone.style.height = 'auto';
-
-      // Remove truncation and overflow on text elements to avoid overlap
-      const truncates = clone.querySelectorAll('.truncate');
-      truncates.forEach(el => {
-        el.style.whiteSpace = 'normal';
-        el.style.overflow = 'visible';
-        el.style.textOverflow = 'clip';
-        el.style.display = 'block';
-      });
-
-      // Remove any scroll containers and expand their height
-      const scrollables = clone.querySelectorAll('.overflow-y-auto, .max-h-100, .max-h-80');
-      scrollables.forEach(el => {
-        el.style.overflow = 'visible';
-        el.style.overflowY = 'visible';
-        el.style.maxHeight = 'none';
-        el.style.height = 'auto';
-      });
-
-      // Ensure images keep aspect ratio
-      const imgs = clone.querySelectorAll('img');
-      imgs.forEach(img => {
-        img.style.width = '56px';
-        img.style.height = '56px';
-        img.style.objectFit = 'cover';
-      });
-
-      // Make rows stack nicely on narrow widths
-      const rows = clone.querySelectorAll('.flex.items-center');
-      rows.forEach(r => {
-        r.style.display = 'flex';
-        r.style.flexWrap = 'wrap';
-        r.style.alignItems = 'center';
-        r.style.gap = '8px';
-      });
-
-      // Hide action buttons that should not appear in the screenshot
-      const buttons = Array.from(clone.querySelectorAll('button'));
-      buttons.forEach(btn => {
-        const text = (btn.textContent || '').trim().toLowerCase();
-        if (text.includes('connect with our whatsapp') || text.includes('share cart via whatsapp') || text.includes('send list via whatsapp')) {
-          btn.style.display = 'none';
-        }
-      });
-
-      // Hide the instruction block from the screenshot
-      const instructions = clone.querySelectorAll('.cart-share-instructions');
-      instructions.forEach(el => { el.style.display = 'none'; });
-
-      // Place offscreen to avoid flashing
-      const wrapper = document.createElement('div');
-      wrapper.style.position = 'fixed';
-      wrapper.style.left = '-9999px';
-      wrapper.style.top = '0';
-      wrapper.style.zIndex = '99999';
-      wrapper.appendChild(clone);
-      document.body.appendChild(wrapper);
-
-      // helper: wait for images inside clone to load
-      const waitForImages = (container) => {
-        const images = Array.from(container.querySelectorAll('img'));
-        return Promise.all(images.map(img => {
-          if (img.complete) return Promise.resolve();
-          return new Promise(resolve => { img.onload = img.onerror = () => resolve(); });
-        }));
-      };
-
-      return { wrapper, clone, waitForImages };
-    };
 
     try {
-      // ensure web fonts are loaded so captured text matches on-screen
-      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
 
-      const created = createCaptureClone(cartRef.current);
-      const wrapper = created.wrapper;
-      const cloneNode = created.clone;
-      // wait for fonts and images to be ready so the screenshot matches rendered cart
-      if (created.waitForImages) await created.waitForImages(cloneNode);
-      const canvas = await html2canvas(cloneNode, {
+      // Wait for all images inside the template to load
+      const images = Array.from(screenshotTemplateRef.current.querySelectorAll('img'));
+      await Promise.all(images.map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(resolve => {
+          img.onload = img.onerror = () => resolve();
+        });
+      }));
+
+      const canvas = await html2canvas(screenshotTemplateRef.current, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
@@ -143,43 +57,60 @@ export default function CartDropdown({ open, onClose }) {
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
       if (!blob) throw new Error('Unable to create image from cart.');
 
-      // remove cloned DOM before proceeding
-      try { wrapper.remove(); } catch (e) {}
-
       const file = new File([blob], 'cutes-cart.png', { type: 'image/png' });
 
+      // ONLY use native share if the browser fully supports file (image) attachments
       if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
-        await navigator.share({
-          files: [file],
-          title: 'Cutes.lk Cart',
-          text: `Cutes.lk Order Details - Total: Rs. ${total.toFixed(2)}\n\nChat: https://wa.me/${waPhone}`,
-        });
-        return;
-      }
-
-      if (navigator.share) {
-        await navigator.share({
-          title: 'Cutes.lk Cart',
-          text: `Cutes.lk Order Details - Total: Rs. ${total.toFixed(2)}\n\nChat: https://wa.me/${waPhone}`,
-        });
-        return;
-      }
-
-      // Try clipboard fallback: write image to clipboard then open WhatsApp chat link for the target number.
-      if (navigator.clipboard && window.ClipboardItem) {
         try {
-          await navigator.clipboard.write([new ClipboardItem({ ['image/png']: blob })]);
-          const text = `Cutes.lk Order Details - Total: Rs. ${total.toFixed(2)}\n(If image not pasted automatically, long-press and paste the image into the chat)`;
-          const url = `https://wa.me/${waPhone}?text=${encodeURIComponent(text)}`;
-          window.open(url, '_blank');
+          await navigator.share({
+            files: [file],
+            title: 'Cutes.lk Cart',
+            text: `Cutes.lk Order Details - Total: Rs. ${total.toFixed(2)}\n\nChat with us: https://wa.me/${waPhone}`,
+          });
           return;
-        } catch (e) {
-          console.warn('Clipboard write failed', e);
+        } catch (shareError) {
+          console.warn('Native file share failed, running fallback...', shareError);
         }
       }
 
-      // Final fallback: open WhatsApp chat link to the requested number with the textual order details
-      sendWhatsAppTextFallback();
+      // FALLBACK when native file sharing is not supported (e.g. desktop Chrome / Firefox)
+      // 1. Write the image to the system clipboard so the user can easily Ctrl+V/Paste in WhatsApp
+      let clipboardSuccess = false;
+      if (navigator.clipboard && window.ClipboardItem) {
+        try {
+          await navigator.clipboard.write([new ClipboardItem({ ['image/png']: blob })]);
+          clipboardSuccess = true;
+        } catch (e) {
+          console.warn('Clipboard copy failed', e);
+        }
+      }
+
+      // 2. Automatically download the high-fidelity screenshot so they can manually attach it if paste fails
+      try {
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'cutes-cart.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(downloadUrl);
+      } catch (downloadError) {
+        console.warn('Automatic download failed', downloadError);
+      }
+
+      // 3. Open WhatsApp with prefilled instructional text based on clipboard status
+      let text = `Cutes.lk Order Details - Total: Rs. ${total.toFixed(2)}\n\n`;
+      if (clipboardSuccess) {
+        text += `👉 (The cart screenshot is COPIED to your clipboard! Just right-click/long-press and PASTE it directly into our chat!)\n\n`;
+      } else {
+        text += `👉 (The cart screenshot has been DOWNLOADED to your device as 'cutes-cart.png'. Please attach it to this chat!)\n\n`;
+      }
+      text += `Chat with us: https://wa.me/${waPhone}`;
+
+      const url = `https://wa.me/${waPhone}?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+
     } catch (error) {
       console.error('Cart share failed:', error);
       sendWhatsAppTextFallback();
@@ -286,6 +217,68 @@ export default function CartDropdown({ open, onClose }) {
             </svg>
             Share cart via WhatsApp
           </button>
+
+          {/* Hidden Screenshot Template */}
+          <div 
+            ref={screenshotTemplateRef}
+            className="bg-white p-6 rounded-3xl"
+            style={{
+              position: 'fixed',
+              left: '-9999px',
+              top: 0,
+              width: '380px',
+              boxShadow: 'none',
+              fontFamily: 'system-ui, -apple-system, sans-serif'
+            }}
+          >
+            {/* Header */}
+            <div className="flex flex-col items-center border-b border-slate-100 pb-4 mb-4">
+              <img src="/logo.png" alt="Cutes.lk Logo" className="h-16 w-16 object-contain mb-2" />
+              <h2 className="text-xl font-extrabold text-[#a53973]">Cutes.lk</h2>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Cart Summary</p>
+            </div>
+
+            {/* Items */}
+            <div className="space-y-4 mb-6">
+              {cart.map(item => (
+                <div key={item.id} className="flex items-center gap-3 border-b border-slate-50 pb-3 last:border-b-0">
+                  {item.image ? (
+                    <img src={item.image} alt={item.title} className="w-12 h-12 object-cover rounded-xl border border-slate-100" />
+                  ) : (
+                    <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-300 font-bold">🛒</div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-slate-800 text-sm">{item.title}</div>
+                    <div className="text-xs text-slate-400 font-bold">{item.code}</div>
+                    <div className="text-xs text-slate-500 mt-1 font-bold">
+                      Qty: {item.qty} × Rs. {item.price.toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="font-extrabold text-slate-800 text-sm">
+                    Rs. {(item.price * item.qty).toFixed(2)}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Summary */}
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 mb-4">
+              <div className="flex justify-between items-center text-xs font-bold text-slate-500 mb-2">
+                <span>Total Items:</span>
+                <span>{cart.reduce((sum, item) => sum + item.qty, 0)}</span>
+              </div>
+              <div className="flex justify-between items-center font-extrabold text-slate-800">
+                <span className="text-[#a53973] text-base">Grand Total:</span>
+                <span className="text-[#a53973] text-lg">Rs. {total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="text-center text-[10px] text-slate-400 font-semibold">
+              <p>Thank you for shopping with Cutes.lk!</p>
+              <p className="mt-1">Please send this image to complete your order.</p>
+            </div>
+          </div>
           </div>
         )}
       </div>
