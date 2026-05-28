@@ -100,13 +100,13 @@ export default function CartDropdown({ open, onClose }) {
       }
 
       // 3. Open WhatsApp with prefilled instructional text based on clipboard status
-      let text = `Cutes.lk Order Details - Total: Rs. ${total.toFixed(2)}\n\n`;
+      let text = ``;
       if (clipboardSuccess) {
-        text += `👉 (The cart screenshot is COPIED to your clipboard! Just right-click/long-press and PASTE it directly into our chat!)\n\n`;
+        text += `The cart screenshot is COPIED to your clipboard! Copy paste it into our chat!\n\n`;
       } else {
-        text += `👉 (The cart screenshot has been DOWNLOADED to your device as 'cutes-cart.png'. Please attach it to this chat!)\n\n`;
+        text += `The cart screenshot has been DOWNLOADED to your device as 'cutes-cart.png'. Please attach it to this chat!)\n\n`;
       }
-      text += `Chat with us: https://wa.me/${waPhone}`;
+      text += ``;
 
       const url = `https://wa.me/${waPhone}?text=${encodeURIComponent(text)}`;
       window.open(url, '_blank');
@@ -194,19 +194,19 @@ export default function CartDropdown({ open, onClose }) {
         {cart.length > 0 && (
           <div className="w-full mt-3 ">
             
-            <p className="mb-3 text-sm text-gray-600">
+           
+              
+              <button
+            onClick={openWhatsAppConnect}
+            className="mb-6 w-full rounded-lg border border-[#25D366] text-[#25D366] text-white font-semibold py-3 text-sm flex items-center justify-center hover:bg-[#1ebe5d]/15 transition"
+          >
+            Chat with us
+          </button>
+          
+           <p className="mb-3 text-sm text-gray-600">
               Online ordering is currently unavailable.  
               Please use WhatsApp to share your cart and place your order.
             </p>
-              <p>1. First Click this </p>
-              <button
-            onClick={openWhatsAppConnect}
-            className="mb-1 w-full rounded-lg bg-[#25D366] text-white font-semibold py-3 text-sm flex items-center justify-center hover:bg-[#1ebe5d] transition"
-          >
-            Connect with our WhatsApp
-          </button>
-          
-          <p>2. Then click this and select our contact</p>
           
           <button
             className="mt-1 w-full rounded-xl bg-[#25D366] text-white font-bold py-3 flex items-center justify-center gap-2 text-base hover:bg-[#1ebe5d] transition-all"
