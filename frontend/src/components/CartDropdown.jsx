@@ -243,20 +243,21 @@ export default function CartDropdown({ open, onClose }) {
         {cart.length > 0 && (
           <div className="w-full mt-3 ">
             
-           
-              
-              <button
-            onClick={openWhatsAppConnect}
-            className="mb-6 w-full rounded-lg border border-[#25D366] text-[#25D366] text-white font-semibold py-3 text-sm flex items-center justify-center hover:bg-[#1ebe5d]/15 transition"
-          >
-            Chat with us
-          </button>
-          
            <p className="mb-3 text-sm text-gray-600">
               Online ordering is currently unavailable.  
               Please use WhatsApp to share your cart and place your order.
             </p>
+              <p>1) First click this to start chat with us </p>
+              <button
+                onClick={openWhatsAppConnect}
+                className="mb-6 w-full rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 flex items-center justify-center gap-2 text-sm transition-all duration-300 shadow-md shadow-[#25D366]/20 hover:shadow-lg hover:shadow-[#25D366]/30 hover:-translate-y-0.5"
+              >
+                
+                Chat with us
+              </button>
           
+           
+          <p>2) Then click this to share your cart with us </p>
           <button
             className="mt-1 w-full rounded-xl bg-[#25D366] text-white font-bold py-3 flex items-center justify-center gap-2 text-base hover:bg-[#1ebe5d] transition-all"
             onClick={handleShareCart}
