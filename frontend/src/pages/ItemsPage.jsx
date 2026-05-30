@@ -844,7 +844,11 @@ function ItemsPage() {
                 </div>
                 <div className="flex items-center justify-between gap-4">
                   <span className="text-2xl font-semibold text-slate-950">Rs. {item.price.toFixed(2)}</span>
-                  <span className="rounded-full bg-brand/10 px-3 py-1 text-sm font-semibold text-brand">In stock</span>
+                  {item.colors?.some(c => c.qty > 0) ? (
+                    <span className="rounded-full bg-brand/10 px-3 py-1 text-sm font-semibold text-brand">In stock</span>
+                  ) : (
+                    <span className="rounded-full bg-rose-100 px-3 py-1 text-sm font-semibold text-rose-700">Out of stock</span>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   <button
