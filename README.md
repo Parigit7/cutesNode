@@ -1,14 +1,14 @@
 # Cutes.lk Management App
 
-A modern React + Spring Boot starter app for Cutes.lk using a black, white, and #d59ca3 theme.
+A modern React + Express.js starter app for Cutes.lk using a black, white, and #d59ca3 theme.
 
 ## Backend
 
-1. Install MySQL and create database `cuteslkdb`
-2. Update `backend/src/main/resources/application.properties` with your MySQL username and password
+1. Install MongoDB and ensure it is running (default connection: `mongodb://localhost:27017/cuteslkdb`)
+2. Configure settings inside `backend/.env` if your MongoDB connection URI or port differs.
 3. Open a terminal in `backend`
-4. Run `mvn clean package`
-5. Run `mvn spring-boot:run`
+4. Run `npm install`
+5. Run `npm start` (or `npm run dev` with nodemon)
 6. The backend listens on `http://localhost:8080`
 
 Seeded admin account:
@@ -25,7 +25,8 @@ Seeded admin account:
 ## Features included
 
 - Tailwind CSS-powered modern UI
-- MySQL persistence for backend user data
+- MongoDB persistence for backend catalog, orders, categories, and user data
 - JWT authentication for secure login
-- Role-based admin endpoints
+- Role-based admin, sales, and packing endpoints
 - Home page, login page, and admin user management panel
+

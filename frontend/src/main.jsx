@@ -14,7 +14,9 @@ import AddOrderPage from './pages/AddOrderPage';
 import SalesItemsPage from './pages/SalesItemsPage';
 import RequirePackage from './components/RequirePackage';
 import PackageOrdersPage from './pages/PackageOrdersPage';
+import StoreItemsPage from './pages/StoreItemsPage';
 import './index.css';
+import { CartProvider } from './context/CartContext';
 
 const router = createBrowserRouter(
   [
@@ -23,6 +25,7 @@ const router = createBrowserRouter(
       element: <App />,
       children: [
         { index: true, element: <HomePage /> },
+        { path: 'store', element: <StoreItemsPage /> },
         { path: 'login', element: <LoginPage /> },
         { path: 'admin', element: <RequireAdmin><AdminPanel /></RequireAdmin> },
         { path: 'admin/items', element: <RequireAdmin><ItemsPage /></RequireAdmin> },
@@ -46,6 +49,8 @@ const router = createBrowserRouter(
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
   </React.StrictMode>
 );

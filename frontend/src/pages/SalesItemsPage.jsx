@@ -7,6 +7,12 @@ function SalesItemsPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 20;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, category]);
 
   const loadCategories = async () => {
     try {
@@ -41,9 +47,18 @@ function SalesItemsPage() {
     return items.filter((item) => {
       const matchesCategory = category === 'All' || item.category === category;
       const matchesSearch = item.code.toLowerCase().includes(search.toLowerCase());
-      return matchesCategory && matchesSearch;
+      const isAvailable = item.colors?.some(c => c.qty > 0);
+      return matchesCategory && matchesSearch && isAvailable;
     });
   }, [items, category, search]);
+
+  const totalItems = filteredItems.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredItems.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredItems, currentPage]);
 
   const categoryOptions = ['All', ...categories.map((cat) => cat.name)];
 
@@ -86,7 +101,7 @@ function SalesItemsPage() {
             No items found for that category or item code.
           </div>
         ) : (
-          filteredItems.map((item) => (
+          paginatedItems.map((item) => (
             <article key={item.id} className="overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 shadow-sm">
               <div className="relative h-56 overflow-hidden">
                 <img
@@ -104,23 +119,80 @@ function SalesItemsPage() {
                   <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-800">{item.code}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-2xl font-semibold text-slate-950">${item.price.toFixed(2)}</span>
+                  <span className="text-2xl font-semibold text-slate-950">Rs. {item.price.toFixed(2)}</span>
                 </div>
-                <div className="grid gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Available Colors</p>
-                  <div className="flex flex-wrap gap-2">
-                    {item.colors.map((c, i) => (
-                      <span key={i} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700">
-                        {c.name}: {c.qty}
+                <div className="space-y-2">
+                  {item.colors.map((color, index) => (
+                    <div key={`${item.code}-${index}`} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-sm">
+                      <div className="flex items-center gap-3">
+                        <span 
+                          className="h-4 w-4 rounded-full border border-slate-200 shadow-sm" 
+                          style={{ backgroundColor: color.name === 'Default' ? '#94a3b8' : color.name }} 
+                          title={color.name}
+                        />
+                        {!color.name.startsWith('#') && (
+                          <span className="font-semibold text-slate-900">{color.name}</span>
+                        )}
+                      </div>
+                      <span className="font-bold text-brand bg-brand/5 px-2.5 py-1 rounded-lg text-xs">
+                        {color.qty} <span className="text-[10px] opacity-70">QTY</span>
                       </span>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </article>
           ))
         )}
       </div>
+
+      {/* Brand-Styled Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 border-t border-slate-100 mt-12">
+          <span className="text-sm font-bold text-slate-500">
+            Showing <span className="text-brand">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-brand">{Math.min(currentPage * ITEMS_PER_PAGE, totalItems)}</span> of <span className="text-brand">{totalItems}</span> items
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+            >
+              Previous
+            </button>
+            <div className="flex items-center gap-1">
+              {[...Array(totalPages)].map((_, i) => {
+                const pageNum = i + 1;
+                const isActive = pageNum === currentPage;
+                if (totalPages > 6 && pageNum !== 1 && pageNum !== totalPages && Math.abs(pageNum - currentPage) > 1) {
+                  if (pageNum === 2 && currentPage > 3) return <span key={pageNum} className="text-slate-400 px-1">...</span>;
+                  if (pageNum === totalPages - 1 && currentPage < totalPages - 2) return <span key={pageNum} className="text-slate-400 px-1">...</span>;
+                  return null;
+                }
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`h-9 w-9 rounded-xl flex items-center justify-center text-sm font-bold transition-all ${isActive
+                      ? 'bg-brand text-slate-950 shadow-md shadow-brand/20'
+                      : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

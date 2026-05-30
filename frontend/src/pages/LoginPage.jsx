@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { EyeIcon } from '../components/EyeIcon';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
@@ -7,17 +8,20 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
     setMessage('');
+    setIsLoading(true);
 
     try {
       const { data } = await api.post('/auth/login', { username, password });
       localStorage.setItem('cutes-user', JSON.stringify(data));
-      setMessage(`Welcome back, ${data.username}. Role: ${data.role}`);
+
       if (data.role === 'ADMIN') {
         navigate('/admin');
       } else if (data.role === 'SALES_MANAGEMENT') {
@@ -28,51 +32,106 @@ function LoginPage() {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed.');
+      setError(err.response?.data?.error || 'Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-full rounded-[1.5rem] bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] lg:p-8">
-      <div className="space-y-3">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand">Secure login</p>
-        <h2 className="text-3xl font-semibold text-slate-950">Sign in to Cutes.lk</h2>
-        <p className="max-w-2xl text-slate-600">
-          Use the seeded admin account to get started. After login, you can add sales and package management team members.
-        </p>
+    <div className="relative min-h-[calc(100vh-120px)] flex items-center justify-center p-4">
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-[10%] left-[10%] w-72 h-72 bg-brand/10 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute bottom-[10%] right-[10%] w-96 h-96 bg-brand/5 rounded-full blur-[120px]" />
       </div>
 
-      {message && <div className="mt-6 rounded-3xl bg-brand/10 p-4 text-sm text-brand">{message}</div>}
-      {error && <div className="mt-6 rounded-3xl bg-rose-500/10 p-4 text-sm text-rose-700">{error}</div>}
+      <div className="w-full max-w-md">
+        <div className="backdrop-blur-2xl bg-white/80 border border-white shadow-[0_32px_64px_-16px_rgba(165,57,115,0.15)] rounded-[2.5rem] p-8 md:p-12 space-y-10">
 
-      <form onSubmit={handleSubmit} className="mt-8 grid gap-5">
-        <label className="grid gap-2 text-sm text-slate-600">
-          Username
-          <input
-            className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            placeholder="admin"
-            required
-          />
-        </label>
+          {/* Header */}
+          <div className="text-center space-y-3">
+            <h2 className="text-4xl font-black text-slate-900 tracking-tight">Login</h2>
+            <p className="text-slate-500 font-medium">Welcome back to Cutes.lk management</p>
+          </div>
 
-        <label className="grid gap-2 text-sm text-slate-600">
-          Password
-          <input
-            className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="admin123"
-            required
-          />
-        </label>
+          {/* Feedback Messages */}
+          {message && (
+            <div className="rounded-2xl bg-brand/5 border border-brand/10 p-4 text-sm text-brand text-center font-bold animate-in fade-in zoom-in duration-300">
+              {message}
+            </div>
+          )}
 
-        <button type="submit" className="inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-pink-300">
-          Login
-        </button>
-      </form>
+          {error && (
+            <div className="rounded-2xl bg-rose-50 border border-rose-100 p-4 text-sm text-rose-600 text-center font-bold animate-in fade-in slide-in-from-top-2 duration-300">
+              {error}
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Username</label>
+              <input
+                className="w-full rounded-2xl border border-slate-100 px-5 py-4 bg-white/50 focus:outline-none focus:ring-4 focus:ring-brand/10 focus:border-brand/30 focus:bg-white transition-all duration-300 placeholder:text-slate-300 font-medium"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder="Your username"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  className="w-full rounded-2xl border border-slate-100 px-5 py-4 bg-white/50 focus:outline-none focus:ring-4 focus:ring-brand/10 focus:border-brand/30 focus:bg-white transition-all duration-300 placeholder:text-slate-300 font-medium pr-12"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  <EyeIcon open={showPassword} />
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative w-full rounded-2xl bg-brand text-white font-bold py-4 transition-all duration-500 hover:bg-brand/90 hover:scale-[1.02] active:scale-95 shadow-[0_20px_40px_-10px_rgba(165,57,115,0.4)] disabled:opacity-50 disabled:scale-100 overflow-hidden"
+            >
+              <span className={`relative z-10 flex items-center justify-center gap-2 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
+                Sign In
+                <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                </div>
+              )}
+            </button>
+          </form>
+
+          {/* Footer Branding */}
+          <div className="pt-4 flex flex-col items-center gap-4">
+            <div className="h-px w-12 bg-slate-100" />
+            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
+              Powered by Cutes.lk
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
