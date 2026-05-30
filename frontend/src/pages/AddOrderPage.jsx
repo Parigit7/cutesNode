@@ -73,7 +73,8 @@ function AddOrderPage() {
     return items.filter(item => {
       const matchCat = searchCategory === 'All' || item.category === searchCategory;
       const matchCode = item.code.toLowerCase().includes(searchCode.toLowerCase());
-      return matchCat && matchCode;
+      const isAvailable = item.colors?.some(c => c.qty > 0);
+      return matchCat && matchCode && isAvailable;
     });
   }, [items, searchCategory, searchCode]);
 

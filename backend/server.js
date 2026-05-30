@@ -109,6 +109,19 @@ async function seedDatabase() {
   }
 }
 
+// Middleware to ensure all backend JSON error responses have a "message" field
+// so the frontend error handlers don't fallback to "Order ID already exists."
+app.use((req, res, next) => {
+  const originalJson = res.json;
+  res.json = function (obj) {
+    if (obj && obj.error && !obj.message) {
+      obj.message = obj.error;
+    }
+    return originalJson.call(this, obj);
+  };
+  next();
+});
+
 // Routes registration on /api to match axios endpoints
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
