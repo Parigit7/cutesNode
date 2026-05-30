@@ -1,9 +1,10 @@
 const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 const Item = require('../models/Item');
 const Category = require('../models/Category');
 const auth = require('../middleware/auth');
 const authorize = require('../middleware/authorize');
+const { uploadImage } = require('../utils/cloudinary');
 
 // Get all items (Publicly accessible for store exploration)
 router.get('/', async (req, res) => {
@@ -51,13 +52,16 @@ router.post('/', auth, authorize('ADMIN'), async (req, res) => {
 
     const categoryObj = await getOrCreateCategory(catName, catCode);
 
+    // Upload to Cloudinary securely if the image is a base64 string
+    const imageUrl = await uploadImage(image);
+
     const newItem = new Item({
       code: code.trim().toUpperCase(),
       title: title.trim(),
       category: categoryObj.name,
       categoryCode: categoryObj.code,
       price: Number(price),
-      image,
+      image: imageUrl,
       colors: colors || []
     });
 
@@ -85,7 +89,12 @@ async function handleUpdateInternal(id, body, res) {
     existingItem.category = categoryObj.name;
     existingItem.categoryCode = categoryObj.code;
     if (price !== undefined) existingItem.price = Number(price);
-    if (image !== undefined) existingItem.image = image;
+    
+    // Upload new image to Cloudinary if it was updated
+    if (image !== undefined) {
+      existingItem.image = await uploadImage(image);
+    }
+    
     if (colors !== undefined) existingItem.colors = colors;
 
     await existingItem.save();
