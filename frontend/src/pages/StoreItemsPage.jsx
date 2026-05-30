@@ -3,7 +3,7 @@ import { useCart } from '../context/CartContext';
 import api from '../services/api';
 
 function StoreItemsPage() {
-  const { addToCart } = useCart();
+  const { cart, addToCart } = useCart();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -62,14 +62,28 @@ function StoreItemsPage() {
   const [qtyMap, setQtyMap] = useState({});
 
   const handleQtyChange = (id, value) => {
-    setQtyMap((prev) => ({ ...prev, [id]: Math.max(1, Number(value) || 1) }));
+    const item = items.find(i => i.id === id);
+    const totalQty = item ? (item.colors?.reduce((sum, c) => sum + c.qty, 0) || 0) : 999;
+    const parsedValue = Number(value) || 1;
+    const restrictedValue = Math.min(totalQty, Math.max(1, parsedValue));
+    setQtyMap((prev) => ({ ...prev, [id]: restrictedValue }));
   };
 
   const handleAddToCart = (item) => {
     const qty = qtyMap[item.id] || 1;
+    const totalQty = item.colors?.reduce((sum, c) => sum + c.qty, 0) || 0;
+    
+    const cartItem = cart.find(i => i.id === item.id);
+    const existingCartQty = cartItem ? cartItem.qty : 0;
+    const newTotalQty = existingCartQty + qty;
+
+    if (newTotalQty > totalQty) {
+      alert(`Cannot add more! Only ${totalQty} items available in stock.${existingCartQty > 0 ? ` You already have ${existingCartQty} in your cart.` : ''}`);
+      return;
+    }
+
     addToCart(item, qty);
     setQtyMap((prev) => ({ ...prev, [item.id]: 1 }));
-    // Optionally show a message or toast here
   };
 
   if (loading) {
@@ -247,30 +261,40 @@ function StoreItemsPage() {
                     </h3>
                   </div>
 
-                  <div className="mt-auto pt-4 border-t border-slate-50 flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Price</p>
-                        <p className="text-2xl font-black text-slate-950">Rs. {item.price.toFixed(2)}</p>
+                  {(() => {
+                    const totalQty = item.colors?.reduce((sum, c) => sum + c.qty, 0) || 0;
+                    return (
+                      <div className="mt-auto pt-4 border-t border-slate-50 flex flex-col gap-2">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Price</p>
+                            <p className="text-2xl font-black text-slate-950">Rs. {item.price.toFixed(2)}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Qty</p>
+                            <p className="text-lg font-black text-[#a53973]">{totalQty}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <input
+                            type="number"
+                            min={1}
+                            max={totalQty}
+                            value={qtyMap[item.id] || 1}
+                            onChange={e => handleQtyChange(item.id, e.target.value)}
+                            className="w-16 rounded-xl border border-slate-200 px-2 py-1 text-center font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#a53973]/20"
+                          />
+                          <button
+                            className="rounded-xl bg-[#a53973] text-white font-bold px-4 py-2 hover:bg-[#a53973]/90 transition-all"
+                            onClick={() => handleAddToCart(item)}
+                            type="button"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 mt-2">
-                      <input
-                        type="number"
-                        min={1}
-                        value={qtyMap[item.id] || 1}
-                        onChange={e => handleQtyChange(item.id, e.target.value)}
-                        className="w-16 rounded-xl border border-slate-200 px-2 py-1 text-center font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#a53973]/20"
-                      />
-                      <button
-                        className="rounded-xl bg-[#a53973] text-white font-bold px-4 py-2 hover:bg-[#a53973]/90 transition-all"
-                        onClick={() => handleAddToCart(item)}
-                        type="button"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
+                    );
+                  })()}
                 </div>
               </article>
             ))
