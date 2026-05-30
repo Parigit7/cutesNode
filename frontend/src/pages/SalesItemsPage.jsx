@@ -47,7 +47,8 @@ function SalesItemsPage() {
     return items.filter((item) => {
       const matchesCategory = category === 'All' || item.category === category;
       const matchesSearch = item.code.toLowerCase().includes(search.toLowerCase());
-      return matchesCategory && matchesSearch;
+      const isAvailable = item.colors?.some(c => c.qty > 0);
+      return matchesCategory && matchesSearch && isAvailable;
     });
   }, [items, category, search]);
 
