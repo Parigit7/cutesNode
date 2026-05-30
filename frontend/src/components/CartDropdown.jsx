@@ -3,11 +3,31 @@ import html2canvas from 'html2canvas';
 import { useCart } from '../context/CartContext';
 // (no external libs needed here)
 
+import api from '../services/api';
+
 export default function CartDropdown({ open, onClose }) {
   const { cart, updateQty, removeFromCart } = useCart();
   const cartRef = useRef(null);
   const screenshotTemplateRef = useRef(null);
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  const [dbItems, setDbItems] = React.useState([]);
+
+  React.useEffect(() => {
+    if (open) {
+      const fetchFreshStock = async () => {
+        try {
+          const { data } = await api.get('/items');
+          if (Array.isArray(data)) {
+            setDbItems(data);
+          }
+        } catch (err) {
+          console.error('Failed to fetch fresh stock info:', err);
+        }
+      };
+      fetchFreshStock();
+    }
+  }, [open]);
 
   const targetPhone = '0707474512';
   const waPhone = targetPhone.replace(/^0/, '94');
@@ -141,46 +161,55 @@ export default function CartDropdown({ open, onClose }) {
           <div className="text-slate-400 text-center py-12">Your cart is empty.</div>
         ) : (
           <div className="space-y-4 max-h-80 overflow-y-auto">
-            {cart.map(item => (
-              <div key={item.id} className="flex items-center gap-3 border-b border-slate-100 pb-2 last:border-b-0">
-                <img src={item.image} alt={item.title} className="w-14 h-14 object-cover rounded-xl border border-slate-100" />
-                <div className="flex-1 min-w-0">
-                  <div className="font-bold text-slate-800 text-sm truncate">{item.title}</div>
-                  <div className="text-xs text-slate-400 truncate">{item.code}</div>
-                  <div className="flex items-center gap-1 mt-1">
+            {cart.map(item => {
+              const dbItem = dbItems.find(i => i.id === item.id);
+              const isSoldOut = dbItems.length > 0 && (!dbItem || !dbItem.colors?.some(c => c.qty > 0));
+              return (
+                <div key={item.id} className="flex items-center gap-3 border-b border-slate-100 pb-2 last:border-b-0">
+                  <img src={item.image} alt={item.title} className="w-14 h-14 object-cover rounded-xl border border-slate-100" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-bold text-slate-800 text-sm truncate flex items-center gap-2">
+                      {item.title}
+                      {isSoldOut && (
+                        <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[9px] font-black uppercase text-rose-600">Sold out</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-slate-400 truncate">{item.code}</div>
+                    <div className="flex items-center gap-1 mt-1">
+                      <button
+                        className="px-2 py-1 rounded-l bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold"
+                        onClick={() => updateQty(item.id, Math.max(1, item.qty - 1))}
+                        disabled={item.qty <= 1}
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        min={1}
+                        value={item.qty}
+                        onChange={e => updateQty(item.id, Math.max(1, Number(e.target.value) || 1))}
+                        className="w-12 text-center border border-slate-200 rounded font-bold text-slate-700 mx-1"
+                      />
+                      <button
+                        className="px-2 py-1 rounded-r bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold"
+                        onClick={() => updateQty(item.id, item.qty + 1)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="font-bold text-[#a53973] text-base">Rs. {(item.price * item.qty).toFixed(2)}</div>
                     <button
-                      className="px-2 py-1 rounded-l bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold"
-                      onClick={() => updateQty(item.id, Math.max(1, item.qty - 1))}
-                      disabled={item.qty <= 1}
+                      className="text-xs text-rose-500 hover:underline mt-1"
+                      onClick={() => removeFromCart(item.id)}
                     >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      min={1}
-                      value={item.qty}
-                      onChange={e => updateQty(item.id, Math.max(1, Number(e.target.value) || 1))}
-                      className="w-12 text-center border border-slate-200 rounded font-bold text-slate-700 mx-1"
-                    />
-                    <button
-                      className="px-2 py-1 rounded-r bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold"
-                      onClick={() => updateQty(item.id, item.qty + 1)}
-                    >
-                      +
+                      Remove
                     </button>
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-1">
-                  <div className="font-bold text-[#a53973] text-base">Rs. {(item.price * item.qty).toFixed(2)}</div>
-                  <button
-                    className="text-xs text-rose-500 hover:underline mt-1"
-                    onClick={() => removeFromCart(item.id)}
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
         
@@ -240,25 +269,34 @@ export default function CartDropdown({ open, onClose }) {
 
             {/* Items */}
             <div className="space-y-4 mb-6">
-              {cart.map(item => (
-                <div key={item.id} className="flex items-center gap-3 border-b border-slate-50 pb-3 last:border-b-0">
-                  {item.image ? (
-                    <img src={item.image} alt={item.title} className="w-12 h-12 object-cover rounded-xl border border-slate-100" />
-                  ) : (
-                    <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-300 font-bold">🛒</div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-slate-800 text-sm">{item.title}</div>
-                    <div className="text-xs text-slate-400 font-bold">{item.code}</div>
-                    <div className="text-xs text-slate-500 mt-1 font-bold">
-                      Qty: {item.qty} × Rs. {item.price.toFixed(2)}
+              {cart.map(item => {
+                const dbItem = dbItems.find(i => i.id === item.id);
+                const isSoldOut = dbItems.length > 0 && (!dbItem || !dbItem.colors?.some(c => c.qty > 0));
+                return (
+                  <div key={item.id} className="flex items-center gap-3 border-b border-slate-50 pb-3 last:border-b-0">
+                    {item.image ? (
+                      <img src={item.image} alt={item.title} className="w-12 h-12 object-cover rounded-xl border border-slate-100" />
+                    ) : (
+                      <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-300 font-bold">🛒</div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        {item.title}
+                        {isSoldOut && (
+                          <span className="rounded bg-rose-100 px-1.5 py-0.5 text-[8px] font-bold text-rose-600">Sold out</span>
+                        )}
+                      </div>
+                      <div className="text-xs text-slate-400 font-bold">{item.code}</div>
+                      <div className="text-xs text-slate-500 mt-1 font-bold">
+                        Qty: {item.qty} × Rs. {item.price.toFixed(2)}
+                      </div>
+                    </div>
+                    <div className="font-extrabold text-slate-800 text-sm">
+                      Rs. {(item.price * item.qty).toFixed(2)}
                     </div>
                   </div>
-                  <div className="font-extrabold text-slate-800 text-sm">
-                    Rs. {(item.price * item.qty).toFixed(2)}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Summary */}
