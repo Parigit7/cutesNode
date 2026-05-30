@@ -9,9 +9,17 @@ export default function CartDropdown({ open, onClose }) {
   const { cart, updateQty, removeFromCart } = useCart();
   const cartRef = useRef(null);
   const screenshotTemplateRef = useRef(null);
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   const [dbItems, setDbItems] = React.useState([]);
+
+  const total = cart.reduce((sum, item) => {
+    const dbItem = dbItems.find(i => i.id === item.id);
+    const isSoldOut = dbItems.length > 0 && (!dbItem || !dbItem.colors?.some(c => c.qty > 0));
+    if (isSoldOut) {
+      return sum;
+    }
+    return sum + item.price * item.qty;
+  }, 0);
 
   React.useEffect(() => {
     if (open) {
