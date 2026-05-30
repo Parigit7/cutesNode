@@ -173,43 +173,55 @@ export default function CartDropdown({ open, onClose }) {
               const dbItem = dbItems.find(i => i.id === item.id);
               const isSoldOut = dbItems.length > 0 && (!dbItem || !dbItem.colors?.some(c => c.qty > 0));
               return (
-                <div key={item.id} className="flex items-center gap-3 border-b border-slate-100 pb-2 last:border-b-0">
-                  <img src={item.image} alt={item.title} className="w-14 h-14 object-cover rounded-xl border border-slate-100" />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-slate-800 text-sm truncate flex items-center gap-2">
-                      {item.title}
-                      {isSoldOut && (
-                        <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[9px] font-black uppercase text-rose-600">Sold out</span>
+                <div key={item.id} className="flex items-center gap-3 border-b border-slate-100 pb-2 last:border-b-0 w-full">
+                  {/* Left Column (Image & Info) - Blurred if Sold Out */}
+                  <div className={`flex flex-1 items-center gap-3 min-w-0 ${isSoldOut ? 'opacity-40 filter blur-[0.5px] pointer-events-none select-none' : ''}`}>
+                    <img src={item.image} alt={item.title} className="w-14 h-14 object-cover rounded-xl border border-slate-100" />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-slate-800 text-sm truncate flex items-center gap-2">
+                        {item.title}
+                        {isSoldOut && (
+                          <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[9px] font-black uppercase text-rose-600">Sold out</span>
+                        )}
+                      </div>
+                      <div className="text-xs text-slate-400 truncate">{item.code}</div>
+                      
+                      {isSoldOut ? (
+                        <div className="text-[10px] font-bold text-rose-500 uppercase tracking-wider mt-1.5">Unavailable</div>
+                      ) : (
+                        <div className="flex items-center gap-1 mt-1">
+                          <button
+                            className="px-2 py-1 rounded-l bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold"
+                            onClick={() => updateQty(item.id, Math.max(1, item.qty - 1))}
+                            disabled={item.qty <= 1}
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            min={1}
+                            value={item.qty}
+                            onChange={e => updateQty(item.id, Math.max(1, Number(e.target.value) || 1))}
+                            className="w-12 text-center border border-slate-200 rounded font-bold text-slate-700 mx-1"
+                          />
+                          <button
+                            className="px-2 py-1 rounded-r bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold"
+                            onClick={() => updateQty(item.id, item.qty + 1)}
+                          >
+                            +
+                          </button>
+                        </div>
                       )}
                     </div>
-                    <div className="text-xs text-slate-400 truncate">{item.code}</div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <button
-                        className="px-2 py-1 rounded-l bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold"
-                        onClick={() => updateQty(item.id, Math.max(1, item.qty - 1))}
-                        disabled={item.qty <= 1}
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        min={1}
-                        value={item.qty}
-                        onChange={e => updateQty(item.id, Math.max(1, Number(e.target.value) || 1))}
-                        className="w-12 text-center border border-slate-200 rounded font-bold text-slate-700 mx-1"
-                      />
-                      <button
-                        className="px-2 py-1 rounded-r bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold"
-                        onClick={() => updateQty(item.id, item.qty + 1)}
-                      >
-                        +
-                      </button>
-                    </div>
                   </div>
+
+                  {/* Right Column (Price & Remove Button) - Always clickable */}
                   <div className="flex flex-col items-end gap-1">
-                    <div className="font-bold text-[#a53973] text-base">Rs. {(item.price * item.qty).toFixed(2)}</div>
+                    <div className={`font-bold text-base ${isSoldOut ? 'text-slate-400 line-through' : 'text-[#a53973]'}`}>
+                      Rs. {(item.price * item.qty).toFixed(2)}
+                    </div>
                     <button
-                      className="text-xs text-rose-500 hover:underline mt-1"
+                      className="text-xs text-rose-500 font-bold hover:underline mt-1.5"
                       onClick={() => removeFromCart(item.id)}
                     >
                       Remove
@@ -281,7 +293,7 @@ export default function CartDropdown({ open, onClose }) {
                 const dbItem = dbItems.find(i => i.id === item.id);
                 const isSoldOut = dbItems.length > 0 && (!dbItem || !dbItem.colors?.some(c => c.qty > 0));
                 return (
-                  <div key={item.id} className="flex items-center gap-3 border-b border-slate-50 pb-3 last:border-b-0">
+                  <div key={item.id} className={`flex items-center gap-3 border-b border-slate-50 pb-3 last:border-b-0 ${isSoldOut ? 'opacity-40' : ''}`}>
                     {item.image ? (
                       <img src={item.image} alt={item.title} className="w-12 h-12 object-cover rounded-xl border border-slate-100" />
                     ) : (
@@ -296,11 +308,15 @@ export default function CartDropdown({ open, onClose }) {
                       </div>
                       <div className="text-xs text-slate-400 font-bold">{item.code}</div>
                       <div className="text-xs text-slate-500 mt-1 font-bold">
-                        Qty: {item.qty} × Rs. {item.price.toFixed(2)}
+                        {isSoldOut ? (
+                          <span className="text-rose-500 italic">Currently unavailable</span>
+                        ) : (
+                          `Qty: ${item.qty} × Rs. ${item.price.toFixed(2)}`
+                        )}
                       </div>
                     </div>
-                    <div className="font-extrabold text-slate-800 text-sm">
-                      Rs. {(item.price * item.qty).toFixed(2)}
+                    <div className={`font-extrabold text-slate-800 text-sm ${isSoldOut ? 'text-slate-400 line-through' : ''}`}>
+                      Rs. {isSoldOut ? '0.00' : (item.price * item.qty).toFixed(2)}
                     </div>
                   </div>
                 );
