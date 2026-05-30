@@ -52,7 +52,7 @@ function LoginPage() {
           {/* Header */}
           <div className="text-center space-y-3">
             <h2 className="text-4xl font-black text-slate-900 tracking-tight">Login</h2>
-            <p className="text-slate-500 font-medium">Welcome back to Cutes.lk management</p>
+            <p className="text-slate-500 font-medium">This is only for Cutes.lk management</p>
           </div>
 
           {/* Feedback Messages */}
@@ -126,6 +126,7 @@ function LoginPage() {
           {/* Footer Branding */}
           <div className="pt-4 flex flex-col items-center gap-4">
             <div className="h-px w-12 bg-slate-100" />
+            
             <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">
               Powered by Cutes.lk
             </p>
