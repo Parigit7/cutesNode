@@ -284,7 +284,7 @@ export default function CartDropdown({ open, onClose }) {
             {/* Header */}
             <div className="flex flex-col items-center border-b border-slate-100 pb-4 mb-4">
               <img src="/logo.png" alt="Cutes.lk Logo" className="h-16 w-16 object-contain mb-2" />
-              <h2 className="text-xl font-extrabold text-[#a53973]">Cutes.lk</h2>
+              
               <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Cart Summary</p>
             </div>
 
