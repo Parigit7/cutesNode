@@ -90,26 +90,45 @@ function AddOrderPage() {
 
     const qty = parseInt(quantity, 10);
     
+    // Find if the item with the same color is already in the order items list
+    const existingIndex = orderItems.findIndex(
+      item => item.itemId === selectedItem.id && item.color === selectedColor
+    );
+    const existingQty = existingIndex !== -1 ? orderItems[existingIndex].quantity : 0;
+    const newTotalQty = existingQty + qty;
+
     // Check available quantity for selected color
     const colorInfo = selectedItem.colors.find(c => c.name === selectedColor);
-    if (colorInfo && qty > colorInfo.qty) {
-      alert(`Insufficient stock! Only ${colorInfo.qty} available for ${selectedColor}.`);
+    if (colorInfo && newTotalQty > colorInfo.qty) {
+      alert(`Insufficient stock! Only ${colorInfo.qty} available for ${selectedColor}.${existingQty > 0 ? ` Already added: ${existingQty}.` : ''}`);
       return;
     }
 
     const totalPrice = qty * selectedItem.price;
 
-    const newItem = {
-      itemId: selectedItem.id,
-      itemCode: selectedItem.code,
-      itemTitle: selectedItem.title,
-      color: selectedColor,
-      quantity: qty,
-      totalPrice: totalPrice,
-      itemPrice: selectedItem.price // to show in UI
-    };
+    if (existingIndex !== -1) {
+      // Merge into the existing row
+      const updatedOrderItems = [...orderItems];
+      updatedOrderItems[existingIndex] = {
+        ...updatedOrderItems[existingIndex],
+        quantity: newTotalQty,
+        totalPrice: updatedOrderItems[existingIndex].totalPrice + totalPrice
+      };
+      setOrderItems(updatedOrderItems);
+    } else {
+      // Add as a new row
+      const newItem = {
+        itemId: selectedItem.id,
+        itemCode: selectedItem.code,
+        itemTitle: selectedItem.title,
+        color: selectedColor,
+        quantity: qty,
+        totalPrice: totalPrice,
+        itemPrice: selectedItem.price // to show in UI
+      };
+      setOrderItems([...orderItems, newItem]);
+    }
 
-    setOrderItems([...orderItems, newItem]);
     setSelectedItem(null);
     setSearchCode('');
     setQuantity('');
