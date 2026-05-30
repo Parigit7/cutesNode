@@ -172,6 +172,7 @@ export default function CartDropdown({ open, onClose }) {
             {cart.map(item => {
               const dbItem = dbItems.find(i => i.id === item.id);
               const isSoldOut = dbItems.length > 0 && (!dbItem || !dbItem.colors?.some(c => c.qty > 0));
+              const totalQty = dbItem ? (dbItem.colors?.reduce((sum, c) => sum + c.qty, 0) || 0) : 999;
               return (
                 <div key={item.id} className="flex items-center gap-3 border-b border-slate-100 pb-2 last:border-b-0 w-full">
                   {/* Left Column (Image & Info) - Blurred if Sold Out */}
@@ -200,13 +201,30 @@ export default function CartDropdown({ open, onClose }) {
                           <input
                             type="number"
                             min={1}
+                            max={totalQty}
                             value={item.qty}
-                            onChange={e => updateQty(item.id, Math.max(1, Number(e.target.value) || 1))}
+                            onChange={e => {
+                              const val = Math.max(1, Number(e.target.value) || 1);
+                              if (val > totalQty) {
+                                alert(`Cannot set quantity to ${val}! Only ${totalQty} items available in stock.`);
+                                updateQty(item.id, totalQty);
+                              } else {
+                                updateQty(item.id, val);
+                              }
+                            }}
                             className="w-12 text-center border border-slate-200 rounded font-bold text-slate-700 mx-1"
                           />
                           <button
                             className="px-2 py-1 rounded-r bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold"
-                            onClick={() => updateQty(item.id, item.qty + 1)}
+                            onClick={() => {
+                              const nextQty = item.qty + 1;
+                              if (nextQty > totalQty) {
+                                alert(`Cannot increase quantity! Only ${totalQty} items available in stock.`);
+                                return;
+                              }
+                              updateQty(item.id, nextQty);
+                            }}
+                            disabled={item.qty >= totalQty}
                           >
                             +
                           </button>
