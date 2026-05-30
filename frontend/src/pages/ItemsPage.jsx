@@ -79,10 +79,11 @@ function ItemsPage() {
   const [deletingItemId, setDeletingItemId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
+  const [stockFilter, setStockFilter] = useState('All');
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, category]);
+  }, [search, category, stockFilter]);
 
   const loadCategories = async () => {
     try {
@@ -117,9 +118,18 @@ function ItemsPage() {
     return items.filter((item) => {
       const matchesCategory = category === 'All' || item.category === category;
       const matchesSearch = item.code.toLowerCase().includes(search.toLowerCase());
-      return matchesCategory && matchesSearch;
+      
+      const inStock = item.colors?.some(c => c.qty > 0);
+      let matchesStock = true;
+      if (stockFilter === 'In Stock') {
+        matchesStock = inStock;
+      } else if (stockFilter === 'Out of Stock') {
+        matchesStock = !inStock;
+      }
+
+      return matchesCategory && matchesSearch && matchesStock;
     });
-  }, [items, category, search]);
+  }, [items, category, search, stockFilter]);
 
   const totalItems = filteredItems.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
@@ -399,6 +409,31 @@ function ItemsPage() {
             </option>
           ))}
         </select>
+      </div>
+
+      {/* Sleek stock filter tabs */}
+      <div className="flex border-b border-slate-200 pb-1 gap-2 sm:gap-4 overflow-x-auto">
+        {['All', 'In Stock', 'Out of Stock'].map((status) => {
+          const isActive = stockFilter === status;
+          return (
+            <button
+              key={status}
+              type="button"
+              onClick={() => {
+                setStockFilter(status);
+                setCurrentPage(1);
+              }}
+              className={`pb-2.5 px-4 font-bold text-xs uppercase tracking-wider transition-all relative ${
+                isActive ? 'text-brand' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              {status}
+              {isActive && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-brand rounded-full" />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {showForm && (
