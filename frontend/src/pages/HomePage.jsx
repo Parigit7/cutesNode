@@ -56,13 +56,13 @@ function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
           </Link>
 
-          <Link
+          {/* <Link
             className="w-full sm:w-auto group relative inline-flex items-center justify-center px-12 py-5 font-black text-brand transition-all duration-500 bg-white/80 backdrop-blur-md border-2 border-brand/20 rounded-[2rem] hover:bg-white hover:border-brand/40 hover:scale-[1.05] active:scale-95 shadow-xl overflow-hidden"
             to="/login"
           >
             <span className="relative z-10 text-xl">Management</span>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-          </Link>
+          </Link> */}
         </div>
 
         {/* Modern Stats Bar (Image-less Visual) */}
